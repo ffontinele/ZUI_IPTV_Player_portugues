@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZUI Sync · Painel</title>
+<style>
+  :root{--bg:#0e0b0a;--card:#181410;--gold:#E8B567;--txt:#eee}
+  *{box-sizing:border-box;font-family:system-ui,sans-serif}
+  body{margin:0;background:var(--bg);color:var(--txt);padding:16px}
+  h1{font-size:20px;color:var(--gold);margin:8px 0}
+  .card{background:var(--card);border:1px solid #ffffff14;border-radius:14px;padding:14px;margin:12px 0}
+  label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#ffffff88;display:block;margin:8px 0 4px}
+  input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #ffffff22;background:#00000055;color:var(--txt);font-size:14px}
+  button{width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:var(--gold);color:#221;font-weight:700;font-size:15px;cursor:pointer}
+  button.sec{background:#ffffff22;color:var(--txt)}
+  button.del{background:#a33;color:#fff;width:auto;padding:6px 10px;margin:0}
+  #msg{margin:10px 0;padding:10px;border-radius:8px;font-size:13px;display:none}
+  .ok{background:#143a14;color:#9f9}
+  .err{background:#3a1414;color:#f99}
+  .row{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff10;padding:8px 0}
+  .small{font-size:12px;color:#ffffff77}
+</style>
+</head>
+<body>
+<h1>ZUI Cloud Sync · Seu Painel</h1>
+
+<div class="card">
+  <label>TV ID</label><input id="tid">
+  <label>Chave do dispositivo</label><input id="tkey">
+  <button onclick="verify()">Verificar TV</button>
+</div>
+
+<div class="card">
+  <label>Nome da lista</label><input id="pname" placeholder="Minha Lista">
+  <label>Tipo</label>
+  <select id="ptype" onchange="toggleX()"><option value="m3u">M3U</option><option value="xtream">Xtream</option></select>
+  <label>URL (M3U) ou Host (Xtream)</label><input id="purl" placeholder="http://...">
+  <div id="xfields" style="display:none">
+    <label>Usuário Xtream</label><input id="xuser">
+    <label>Senha Xtream</label><input id="xpass" type="password">
+  </div>
+  <button onclick="send()">Enviar lista pra TV</button>
+</div>
+
+<div class="card">
+  <label>Listas enviadas</label>
+  <div id="list"></div>
+  <button class="sec" onclick="load()">Atualizar</button>
+</div>
+
+<div id="msg"></div>
+
+<script>
+var BASE='https://fyqpqqrtmgcsjnygxkqv.supabase.co';
+var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5cXBxcXJ0bWdjc2pueWd4a3F2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMzE3NjEsImV4cCI6MjEwMzcwNzc2MX0.QInVAAU7i0GNSkWRzP6HedqkP5U6HJBDRhpQyey0eh8';
+var q=new URLSearchParams(location.search);
+if(q.get('id'))document.getElementById('tid').value=q.get('id');
+if(q.get('key'))document.getElementById('tkey').value=q.get('key');
+function H(){var id=document.getElementById('tid').value.trim(),k=document.getElementById('tkey').value.trim();
+ return{'apikey':ANON,'Authorization':'Bearer '+ANON,'Content-Type':'application/json','x-zui-device-id':id,'x-zui-device-key':k};}
+function M(t,ok){var m=document.getElementById('msg');m.style.display='block';m.className=ok?'ok':'err';m.textContent=t;}
+function toggleX(){document.getElementById('xfields').style.display=(document.getElementById('ptype').value=='xtream')?'block':'none';}
+function verify(){fetch(BASE+'/rest/v1/devices?select=device_id,device_key',{headers:H()})
+ .then(function(r){return r.json();}).then(function(d){
+   if(d&&d.length>0){M('TV encontrada: '+d[0].device_id+' ✔',true);load();}
+   else M('TV não encontrada. Confira ID/chave e se o app está aberto na TV.',false);
+ }).catch(function(e){M('Erro: '+e,false);});}
+function send(){var t=document.getElementById('ptype').value;
+ var body={device_id:document.getElementById('tid').value.trim(),
+   playlist_url:document.getElementById('purl').value.trim(),
+   playlist_name:document.getElementById('pname').value.trim()||'Minha Lista',
+   source_type:t};
+ if(t=='xtream'){body.xtream_username=document.getElementById('xuser').value.trim();
+   body.xtream_password=document.getElementById('xpass').value.trim();}
+ fetch(BASE+'/rest/v1/playlists',{method:'POST',headers:H(),body:JSON.stringify(body)})
+ .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);M('Lista enviada! A TV carrega em segundos ✔',true);load();})
+ .catch(function(e){M('Erro ao enviar: '+e,false);});}
+function load(){fetch(BASE+'/rest/v1/playlists?select=id,playlist_name,source_type,loaded&order=sent_at.desc',{headers:H()})
+ .then(function(r){return r.json();}).then(function(d){var el=document.getElementById('list');el.innerHTML='';
+   if(!d||d.length==0){el.innerHTML='<div class="small">Nenhuma lista enviada.</div>';return;}
+   d.forEach(function(p){var div=document.createElement('div');div.className='row';
+     div.innerHTML='<span>'+p.playlist_name+' <span class="small">('+p.source_type+')</span></span>';
+     var b=document.createElement('button');b.className='del';b.textContent='✕';b.onclick=function(){del(p.id);};
+     div.appendChild(b);el.appendChild(div);});
+ }).catch(function(e){});}
+function del(id){fetch(BASE+'/rest/v1/playlists?id=eq.'+id,{method:'DELETE',headers:H()})
+ .then(function(){M('Lista removida.',true);load();});}
+</script>
+</body>
+</html>
