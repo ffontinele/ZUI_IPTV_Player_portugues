@@ -6,6 +6,7 @@ import { useUIStore } from '@/state/uiStore';
 import { useSettingsStore, SUBTITLE_SIZE_PX } from '@/state/settingsStore';
 import { usePlayer } from '@/hooks/usePlayer';
 import { useRemote } from '@/hooks/useRemote';
+import { useWatchProgress } from '@/hooks/useWatchProgress';
 import { useAudioWatchdog } from '@/hooks/useAudioWatchdog';
 import { useStreamWatchdog } from '@/hooks/useStreamWatchdog';
 import { OSD } from './OSD';
@@ -92,6 +93,7 @@ export function VideoPlayer() {
 
   usePlayer(videoRef, onFatalError);
   useRemote(videoRef);
+  useWatchProgress(videoRef);
   useAudioWatchdog(videoRef);
   useStreamWatchdog({
     videoRef,

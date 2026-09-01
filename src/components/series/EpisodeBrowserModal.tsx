@@ -48,9 +48,11 @@ function SeasonTab({
 function EpisodeRow({
   episode,
   onPlay,
+  isCurrent,
 }: {
   episode: XtreamSeriesEpisode;
   onPlay: () => void;
+  isCurrent?: boolean;
 }) {
   const { t } = useTranslation();
   const { ref, focused } = useFocusable({
@@ -108,6 +110,11 @@ function EpisodeRow({
           focused ? 'text-[#E8B567]' : 'text-white/90',
         ].join(' ')}>
           {episode.title || t('episode_browser.episode_fallback', { num: epNum })}
+          {isCurrent && (
+            <span className="ml-2 px-1.5 py-0.5 rounded bg-[#E8B567] text-[#0e0b0a] text-[9px] font-bold uppercase tracking-wider align-middle">
+              Continuar
+            </span>
+          )}
         </div>
         {plot && (
           <p className="text-[11px] text-white/35 leading-relaxed line-clamp-2">{plot}</p>
@@ -144,6 +151,7 @@ export function EpisodeBrowserModal() {
   const status            = useSeriesStore(s => s.detailsStatus);
   const error             = useSeriesStore(s => s.detailsError);
   const activeSeason      = useSeriesStore(s => s.detailsActiveSeason);
+  const ceInfo            = useSeriesStore(s => s.detailsSeriesId ? s.currentEpisode[s.detailsSeriesId] : undefined);
   const closeSeriesDetails      = useSeriesStore(s => s.closeSeriesDetails);
   const setDetailsActiveSeason  = useSeriesStore(s => s.setDetailsActiveSeason);
   const playEpisode             = useSeriesStore(s => s.playEpisode);
@@ -354,6 +362,7 @@ export function EpisodeBrowserModal() {
                   <EpisodeRow
                     key={ep.id}
                     episode={ep}
+                    isCurrent={!!(ceInfo && ceInfo.season === activeSeason && ceInfo.episode === ep.episode_num)}
                     onPlay={() => playEpisode(ep, series.title, String(activeSeason))}
                   />
                 ))}

@@ -82,12 +82,8 @@ function buildCategories(
 
   const specials: SeriesCategory[] = [];
   const resumeCount = Object.values(watchProgress).filter(p => p > 0 && p < 0.99).length;
-  if (resumeCount > 0) {
-    specials.push({ id: '__resume__', label: 'Devam Et', count: resumeCount });
-  }
-  if (watchlistIds.length > 0) {
-    specials.push({ id: '__watchlist__', label: 'İzleme Listesi', count: watchlistIds.length });
-  }
+  specials.push({ id: '__resume__', label: 'Continuar Assistindo', count: resumeCount });
+  specials.push({ id: '__watchlist__', label: 'Favoritos', count: watchlistIds.length });
 
   return [...specials, ...regularCats];
 }
@@ -127,6 +123,9 @@ type SeriesStore = {
   cycleSort: () => void;
   toggleWatchlist: (id: string) => void;
   setWatchProgress: (id: string, progress: number) => void;
+  setCurrentEpisode: (id: string, ep: import("@/types/series").CurrentEpisode) => void;
+  clearResume: () => void;
+  clearWatchlist: () => void;
   playSeries: (id: string) => void;
   openSeriesDetails: (id: string) => Promise<void>;
   closeSeriesDetails: () => void;
@@ -181,8 +180,20 @@ export const useSeriesStore = create<SeriesStore>()(
             getSeriesStreams(creds),
           ]);
 
+          {
+            const validIds = new Set(allSeries.map(x => x.id));
+            const pw = Object.fromEntries(Object.entries(get().watchProgress).filter(([id]) => validIds.has(id)));
+            const pc = Object.fromEntries(Object.entries(get().currentEpisode).filter(([id]) => validIds.has(id)));
+            if (Object.keys(pw).length !== Object.keys(get().watchProgress).length || Object.keys(pc).length !== Object.keys(get().currentEpisode).length) {
+              set({ watchProgress: pw, currentEpisode: pc });
+            }
+          }
           const { watchlistIds, watchProgress, sortBy } = get();
-          const sorted = sortSeries(allSeries, sortBy);
+          const ceMap = get().currentEpisode;
+      const sorted = sortSeries(allSeries, sortBy).map(sr => {
+        const ce = ceMap[sr.id];
+        return ce ? { ...sr, currentEpisode: ce } : sr;
+      });
           const categories = buildCategories(rawCategories, sorted, watchlistIds, watchProgress);
           const newThisWeekCount = sorted.filter(s => s.isNew).length;
 
@@ -263,7 +274,29 @@ export const useSeriesStore = create<SeriesStore>()(
       setWatchProgress: (id, progress) => {
         const next = { ...get().watchProgress, [id]: progress };
         set({ watchProgress: next });
-        get()._updateSpecials();
+        const g = get() as any;
+        if (g._updateSpecials) g._updateSpecials();
+      },
+
+      clearResume: () => {
+        set({ watchProgress: {}, currentEpisode: {} });
+        const g = get() as any;
+        if (g._updateSpecials) g._updateSpecials();
+        get()._recompute();
+      },
+
+      clearWatchlist: () => {
+        set({ watchlistIds: [] });
+        const g = get() as any;
+        if (g._updateSpecials) g._updateSpecials();
+        get()._recompute();
+      },
+
+      setCurrentEpisode: (id, ep) => {
+        const next = { ...get().currentEpisode, [id]: ep };
+        set({ currentEpisode: next });
+        const g = get() as any;
+        if (g._updateSpecials) g._updateSpecials();
       },
 
       // ── Playback ────────────────────────────────────────────────────────
@@ -377,6 +410,12 @@ export const useSeriesStore = create<SeriesStore>()(
             seriesTitle,
           });
         }
+        const ceNow = get().currentEpisode[get().detailsSeriesId ?? ''];
+        if (ceNow && ceNow.season === Number(seasonKey) && ceNow.episode === episode.episode_num && (ceNow.resumeSec ?? 0) > 10) {
+          usePlayerStore.getState().setResumeSec(ceNow.resumeSec ?? 0);
+        } else {
+          usePlayerStore.getState().setResumeSec(0);
+        }
         get().closeSeriesDetails();
         useUIStore.getState().navigate('player');
       },
@@ -398,8 +437,8 @@ export const useSeriesStore = create<SeriesStore>()(
         const resumeCount = Object.values(watchProgress).filter(p => p > 0 && p < 0.99).length;
         const regulars = categories.filter(c => c.id !== '__resume__' && c.id !== '__watchlist__');
         const specials: SeriesCategory[] = [];
-        if (resumeCount > 0) specials.push({ id: '__resume__', label: 'Devam Et', count: resumeCount });
-        if (watchlistIds.length > 0) specials.push({ id: '__watchlist__', label: 'İzleme Listesi', count: watchlistIds.length });
+        specials.push({ id: '__resume__', label: 'Continuar Assistindo', count: resumeCount });
+        specials.push({ id: '__watchlist__', label: 'Favoritos', count: watchlistIds.length });
         set({ categories: [...specials, ...regulars] });
       },
     }),

@@ -241,6 +241,29 @@ function SectionHeader() {
   const sortBy = useSeriesStore(s => s.sortBy);
   const cycleSort = useSeriesStore(s => s.cycleSort);
   const isSearchMode = categorySearch.trim().length > 0;
+  const activeCategory = useSeriesStore(s => s.activeCategory);
+  const clearResume = useSeriesStore(s => s.clearResume);
+  const clearWatchlist = useSeriesStore(s => s.clearWatchlist);
+  const [confirmClear, setConfirmClear] = useState(false);
+  const confirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleClear = () => {
+    if (!confirmClear) {
+      setConfirmClear(true);
+      if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+      confirmTimerRef.current = setTimeout(() => setConfirmClear(false), 3000);
+      return;
+    }
+    if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+    setConfirmClear(false);
+    if (activeCategory === '__resume__') clearResume();
+    else if (activeCategory === '__watchlist__') clearWatchlist();
+  };
+
+  const { ref: clearRef, focused: clearFocused } = useFocusable({
+    focusKey: 'SERIES_CLEAR',
+    onEnterPress: handleClear,
+  });
 
   const { ref, focused } = useFocusable({
     focusKey: 'SERIES_SORT',
@@ -282,6 +305,23 @@ function SectionHeader() {
         </svg>
         <span>{t(SORT_KEYS[sortBy])}</span>
       </button>
+
+      {!isSearchMode && (activeCategory === '__resume__' || activeCategory === '__watchlist__') && (
+        <button
+          ref={clearRef as React.RefObject<HTMLButtonElement>}
+          onClick={handleClear}
+          className={[
+            'flex items-center gap-2 px-3 h-9 rounded-full text-[11px] uppercase tracking-[0.25em] font-semibold transition-all shrink-0',
+            confirmClear
+              ? 'border-2 border-white bg-red-500 text-white'
+              : clearFocused
+                ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a]'
+                : 'border-2 border-[#E8B567]/60 text-[#E8B567]',
+          ].join(' ')}
+        >
+          {confirmClear ? 'Confirmar?' : (activeCategory === '__resume__' ? 'Limpar historico' : 'Limpar favoritos')}
+        </button>
+      )}
     </div>
   );
 }

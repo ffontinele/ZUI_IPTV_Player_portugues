@@ -18,6 +18,10 @@ type PlayerStore = {
   audioWarning: string | null;
   osdVisible: boolean;
   seriesContext: SeriesContext | null;
+  resumeRatio: number;
+  setResumeRatio: (r: number) => void;
+  resumeSec: number;
+  setResumeSec: (sec: number) => void;
 
   setSource: (s: StreamSource) => void;
   setState: (s: PlayerState) => void;
@@ -71,6 +75,8 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
   audioWarning: null,
   osdVisible: true,
   seriesContext: null,
+  resumeRatio: 0,
+  resumeSec: 0,
 
   setSource: (s) => set({ currentSource: s, error: null, audioWarning: null, state: 'loading' }),
   setState: (s) => set({ state: s }),
@@ -79,6 +85,8 @@ export const usePlayerStore = create<PlayerStore>()((set, get) => ({
   showOSD: () => set({ osdVisible: true }),
   hideOSD: () => set({ osdVisible: false }),
   setSeriesContext: (c) => set({ seriesContext: c }),
+  setResumeRatio: (r) => set({ resumeRatio: r }),
+  setResumeSec: (sec) => set({ resumeSec: sec }),
   playNextEpisode: () => {
     const ctx = get().seriesContext;
     if (!ctx) return 'no_context';

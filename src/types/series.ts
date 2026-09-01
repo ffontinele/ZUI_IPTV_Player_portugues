@@ -9,6 +9,8 @@ export interface CurrentEpisode {
   title: string;
   /** Human-readable remaining time, e.g. "—12dk kaldı" */
   remaining: string;
+  /** Segundos ja assistidos (pra retomar de onde parou) */
+  resumeSec?: number;
 }
 
 export interface Series {

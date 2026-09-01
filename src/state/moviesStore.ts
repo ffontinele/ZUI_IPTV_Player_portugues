@@ -78,12 +78,8 @@ function buildCategories(
   // Pinned specials
   const specials: MovieCategory[] = [];
   const resumeCount = Object.values(watchProgress).filter(p => p > 0 && p < 0.99).length;
-  if (resumeCount > 0) {
-    specials.push({ id: '__resume__', label: 'Devam Et', count: resumeCount });
-  }
-  if (favoriteIds.length > 0) {
-    specials.push({ id: '__favorites__', label: 'Favoriler', count: favoriteIds.length });
-  }
+  specials.push({ id: '__resume__', label: 'Continuar Assistindo', count: resumeCount });
+  specials.push({ id: '__favorites__', label: 'Favoritos', count: favoriteIds.length });
 
   return [...specials, ...regularCats];
 }
@@ -115,6 +111,8 @@ type MoviesStore = {
   cycleSort: () => void;
   toggleFavorite: (id: string) => void;
   setWatchProgress: (id: string, progress: number) => void;
+  clearResume: () => void;
+  clearFavorites: () => void;
   toggleHiddenCategory: (id: string) => void;
   playMovie: (id: string) => void;
   openMovieDetails: (id: string) => void;
@@ -161,6 +159,14 @@ export const useMoviesStore = create<MoviesStore>()(
             getVodStreams(creds),
           ]);
 
+          {
+            const validIds = new Set(allMovies.map(m => m.id));
+            const pf = get().favoriteIds.filter(id => validIds.has(id));
+            const pw = Object.fromEntries(Object.entries(get().watchProgress).filter(([id]) => validIds.has(id)));
+            if (pf.length !== get().favoriteIds.length || Object.keys(pw).length !== Object.keys(get().watchProgress).length) {
+              set({ favoriteIds: pf, watchProgress: pw });
+            }
+          }
           const { favoriteIds, watchProgress, sortBy } = get();
           const sorted = sortMovies(allMovies, sortBy);
           const categories = buildCategories(rawCategories, sorted, favoriteIds, watchProgress);
@@ -237,6 +243,20 @@ export const useMoviesStore = create<MoviesStore>()(
         get()._updateSpecials();
       },
 
+      clearResume: () => {
+        set({ watchProgress: {} });
+        const g = get() as any;
+        if (g._updateSpecials) g._updateSpecials();
+        get()._recompute();
+      },
+
+      clearFavorites: () => {
+        set({ favoriteIds: [] });
+        const g = get() as any;
+        if (g._updateSpecials) g._updateSpecials();
+        get()._recompute();
+      },
+
       // ── Playback ────────────────────────────────────────────────────────
 
       playMovie: (id) => {
@@ -257,6 +277,9 @@ export const useMoviesStore = create<MoviesStore>()(
         //    This helps when the native codec (e.g. H.265 in MKV) is unsupported.
         const hlsUrl = buildVodUrl(creds, streamId, 'm3u8');
         const candidates = ext !== 'm3u8' ? [hlsUrl] : [];
+
+        const savedProgress = get().watchProgress[id] ?? 0;
+        usePlayerStore.getState().setResumeRatio(savedProgress > 0.02 && savedProgress < 0.95 ? savedProgress : 0);
 
         usePlayerStore.getState().setSource({
           id: `vod-${id}`,
@@ -294,8 +317,8 @@ export const useMoviesStore = create<MoviesStore>()(
         const resumeCount = Object.values(watchProgress).filter(p => p > 0 && p < 0.99).length;
         const regulars = categories.filter(c => c.id !== '__resume__' && c.id !== '__favorites__');
         const specials: MovieCategory[] = [];
-        if (resumeCount > 0) specials.push({ id: '__resume__', label: 'Devam Et', count: resumeCount });
-        if (favoriteIds.length > 0) specials.push({ id: '__favorites__', label: 'Favoriler', count: favoriteIds.length });
+        specials.push({ id: '__resume__', label: 'Continuar Assistindo', count: resumeCount });
+        specials.push({ id: '__favorites__', label: 'Favoritos', count: favoriteIds.length });
         set({ categories: [...specials, ...regulars] });
       },
     }),

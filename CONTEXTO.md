@@ -30,3 +30,20 @@ ares-package dist
 - Botao Detalhes abre MovieDetailsModal (sinopse, nota, ano)
 - BACK respeita modais abertos (fecha o modal antes de navegar)
 - VOLTAR do modal de episodios agora e botao real
+
+## 👁️ Assistidos Recentemente / Continuar Assistindo (02-09-2026)
+- Hook useWatchProgress salva progresso automatico a cada 5s (timeupdate/pause/ended)
+- Filmes: salva % em moviesStore.watchProgress + retoma de onde parou (resumeRatio)
+- Series: salva % + temporada/episodio/segundos (currentEpisode + resumeSec)
+- Badge amarelo "CONTINUAR" no ultimo episodio assistido no modal
+- Categoria "Continuar Assistindo" FIXA na biblioteca (Filmes e Series)
+- Categoria "Favoritos" FIXA na biblioteca
+- Botoes "LIMPAR HISTORICO" / "LIMPAR FAVORITOS" com confirmacao em 2 cliques
+- Prune automatico de favoritos/progresso fantasmas (IDs que nao existem mais)
+- Traducoes: Devam Et → Continuar Assistindo, Favoriler/İzleme Listesi → Favoritos
+
+## 🖱️ Mouse e Navegacao (01-09-2026)
+- Clique no poster SELECIONA no topo (nao reproduz direto)
+- Botao "Detalhes" abre MovieDetailsModal (sinopse, nota, ano, runtime)
+- BACK respeita modais abertos (fecha o modal antes de navegar)
+- "VOLTAR" do modal de episodios agora e botao real clicavel
