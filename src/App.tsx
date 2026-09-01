@@ -13,7 +13,7 @@ import { PlaylistsScreen } from '@/screens/PlaylistsScreen';
 import { SplashScreen } from '@/components/SplashScreen';
 import { RemoteRouter } from '@/components/RemoteRouter';
 import { TopBar } from '@/components/layout/TopBar';
-import { ConfirmModal } from '@/components/common/ConfirmModal';
+import { ExitModal } from '@/components/common/ExitModal';
 import { useUIStore } from '@/state/uiStore';
 import { usePlaylistStore } from '@/state/playlistStore';
 import { useSourceStore } from '@/state/sourceStore';
@@ -227,12 +227,11 @@ export default function App() {
       <Toast />
 
       {modalOpen === 'exit' && (
-        <ConfirmModal
+        <ExitModal
           title={t('app.exit_title')}
           message={t('app.exit_message')}
-          confirmLabel={t('app.exit_confirm')}
-          cancelLabel={t('app.exit_cancel')}
-          onConfirm={() => window.close()}
+          onExit={() => window.close()}
+          onReload={() => { window.location.reload(); }}
           onCancel={handleCloseModal}
         />
       )}

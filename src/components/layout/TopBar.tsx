@@ -92,13 +92,11 @@ function NavButton({
       aria-label={label}
       className={[
         'relative grid place-items-center w-12 h-12 rounded-full border transition-all',
-        active
-          ? focused
-            ? 'border-[#E8B567]/70 bg-[#E8B567]/[0.15] text-[#E8B567] shadow-[0_0_32px_-8px_#E8B567] scale-[1.08]'
-            : 'border-[#E8B567]/55 bg-[#E8B567]/[0.10] text-[#E8B567] shadow-[0_0_28px_-10px_#E8B567]'
-          : focused
-            ? 'border-[#E8B567]/55 bg-[#E8B567]/[0.06] text-white scale-[1.05]'
-            : 'border-white/[0.08] text-white/55 hover:text-white hover:border-white/20',
+        focused
+          ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] scale-[1.08] shadow-[0_0_32px_-4px_rgba(255,255,255,0.6)]'
+          : active
+            ? 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a] shadow-[0_0_20px_-8px_#E8B567]'
+            : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
       ].join(' ')}
     >
       {icon}
@@ -107,7 +105,7 @@ function NavButton({
       )}
       <span className={[
         'absolute top-full mt-1.5 left-1/2 -translate-x-1/2 text-[9px] uppercase tracking-[0.3em] whitespace-nowrap font-semibold',
-        active || focused ? 'text-[#E8B567]' : 'text-white/50',
+        focused ? 'text-white' : 'text-[#E8B567]',
       ].join(' ')}>
         {label}
       </span>

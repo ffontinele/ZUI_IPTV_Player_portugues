@@ -293,12 +293,7 @@ function CheckItem({
     focusKey: itemKey,
     onEnterPress: onToggle,
     onArrowPress: (dir) => {
-      // Son satırdan DOWN → Kapat butonuna — focusKey convention: modalKey + '-close'
-      // Her modal kendi closeKey'ini geçemez, bu yüzden suffix pattern kullanıyoruz.
-      // Aşağıdaki mantık: isLast ise DOWN'u tüket; parent ModalBase isFocusBoundary
-      // sayesinde focus sızmaz zaten, ama explicit route daha güvenli.
       if (dir === 'down' && isLast) {
-        // focusKey'in prefix'ini çözümle: "hide-cat-item-X" → "hide-cat-close"
         const closeKey = itemKey.replace(/-item-.*$/, '-close');
         setFocus(closeKey);
         return false;
@@ -312,24 +307,26 @@ function CheckItem({
       ref={ref as React.RefObject<HTMLButtonElement>}
       onClick={onToggle}
       className={[
-        'flex items-center gap-4 px-3 py-2.5 rounded-xl text-left w-full transition-all',
-        focused ? 'bg-white/[0.07] outline outline-2 outline-white/20 outline-offset-[-2px]' : 'hover:bg-white/[0.04]',
+        'flex items-center gap-4 px-3 h-12 shrink-0 rounded-lg text-left w-full transition-all border-2',
+        focused
+          ? 'bg-white text-[#0e0b0a] border-white'
+          : 'bg-[#E8B567] text-[#0e0b0a] border-[#E8B567]',
       ].join(' ')}
     >
       <span className={[
-        'w-4 h-4 shrink-0 rounded border-2 flex items-center justify-center transition-colors',
-        checked ? 'bg-[#E8B567] border-[#E8B567]' : 'border-white/30 bg-transparent',
+        'w-5 h-5 shrink-0 rounded border-2 flex items-center justify-center',
+        checked ? 'bg-[#0e0b0a] border-[#0e0b0a]' : 'border-[#0e0b0a]/60 bg-transparent',
       ].join(' ')}>
         {checked && (
-          <svg viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.5"
-            strokeLinecap="round" strokeLinejoin="round" className="w-2.5 h-2.5">
+          <svg viewBox="0 0 12 12" fill="none" stroke="#E8B567" strokeWidth="2.5"
+            strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
             <path d="M2 6l3 3 5-5" />
           </svg>
         )}
       </span>
-      <span className="flex-1 text-[16px] text-white/80">{label}</span>
+      <span className="flex-1 text-[15px] leading-6 text-[#0e0b0a]">{label}</span>
       {count !== undefined && (
-        <span className="font-serif text-[14px] font-light text-white/35 tabular-nums">{count}</span>
+        <span className="text-[13px] leading-6 text-[#0e0b0a] tabular-nums">{count}</span>
       )}
     </button>
   );
@@ -350,7 +347,7 @@ function HideCategoriesModal({ onClose }: { onClose: () => void }) {
       title={t('modal.hide_categories.title')}
       onClose={onClose}
     >
-      <p className="font-serif italic text-[14px] text-white/45 mb-5">
+      <p className="font-serif italic text-[14px] text-white/85 mb-5">
         {t('modal.hide_categories.description')}
       </p>
       <div className="flex-1 overflow-y-auto flex flex-col gap-1 pr-1 min-h-0">
@@ -474,7 +471,8 @@ const LANGUAGES: { code: Language; name: string; tag: string }[] = [
   { code: 'en', name: 'English',  tag: 'EN' },
   { code: 'de', name: 'Deutsch',  tag: 'DE' },
   { code: 'fr', name: 'Français', tag: 'FR' },
-  { code: 'es', name: 'Español',  tag: 'ES' },
+  { code: 'es', name: 'Español', tag: 'ES' },
+  { code: 'pt', name: 'Português', tag: 'PT' },
 ];
 
 // ─── Focusable language row ───────────────────────────────────────────────────

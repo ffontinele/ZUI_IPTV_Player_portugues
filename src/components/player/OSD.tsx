@@ -46,6 +46,12 @@ function formatTime(seconds: number): string {
   return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
 }
 
+
+// ─── Next Episode button (series only) ───────────────────────────────────────
+
+
+
+
 // ─── Subtitle quick-toggle (CC button) ───────────────────────────────────────
 
 function SubtitleToggleOSDBtn() {
@@ -69,15 +75,13 @@ function SubtitleToggleOSDBtn() {
     <button
       ref={ref as React.RefObject<HTMLButtonElement>}
       onClick={toggle}
-      className="flex flex-col items-center gap-1 transition-colors group"
+      className="bg-transparent flex flex-col items-center gap-1 transition-colors group"
     >
       <div className={[
-        'w-11 h-11 rounded-full border grid place-items-center transition-all',
+        'w-12 h-12 rounded-full grid place-items-center border-2',
         focused
-          ? 'border-[#E8B567]/60 bg-[#E8B567]/10 shadow-[0_0_24px_-6px_#E8B567]'
-          : subtitleEnabled
-            ? 'border-[#E8B567]/40'
-            : 'border-white/20',
+          ? 'bg-white text-[#0e0b0a] border-white'
+          : 'bg-[#E8B567] text-[#0e0b0a] border-[#0e0b0a]',
       ].join(' ')}>
         {/* Closed-caption icon */}
         <svg
@@ -89,7 +93,7 @@ function SubtitleToggleOSDBtn() {
           strokeLinejoin="round"
           className={[
             'w-5 h-5 transition-colors',
-            focused || subtitleEnabled ? 'text-[#E8B567]' : 'text-white/50',
+            focused || subtitleEnabled ? 'text-[#0e0b0a]' : 'text-[#0e0b0a]',
           ].join(' ')}
         >
           <rect x="2" y="5" width="20" height="14" rx="2" />
@@ -98,8 +102,8 @@ function SubtitleToggleOSDBtn() {
         </svg>
       </div>
       <span className={[
-        'text-[9px] uppercase tracking-[0.2em] font-semibold',
-        focused || subtitleEnabled ? 'text-[#E8B567]' : 'text-white/40',
+        'text-[9px] uppercase tracking-[0.2em] font-bold',
+        focused || subtitleEnabled ? 'text-[#0e0b0a]' : 'text-[#0e0b0a]',
       ].join(' ')}>
         {subtitleEnabled ? t('player.sub_on') : t('player.sub_off')}
       </span>
@@ -180,22 +184,22 @@ function BottomControls({ videoRef }: ControlsProps) {
         {!isLive && (
           <button
             onClick={() => seek(-10)}
-            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors group"
+            className="flex flex-col items-center gap-1 text-[#E8B567] hover:text-white transition-colors group"
           >
-            <div className="w-11 h-11 rounded-full border border-white/20 grid place-items-center group-hover:border-white/40 transition-colors">
+            <div className="w-11 h-11 rounded-full bg-[#E8B567] text-[#0e0b0a] grid place-items-center group-hover:bg-white group-hover:text-[#0e0b0a] transition-colors">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                 <path d="M12 5V2L7 7l5 5V9c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
                 <text x="50%" y="67%" textAnchor="middle" fontSize="5" fill="currentColor" dy=".1em">10</text>
               </svg>
             </div>
-            <span className="text-[9px] uppercase tracking-[0.2em] font-semibold">−10s</span>
+            <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#0e0b0a]">−10s</span>
           </button>
         )}
 
         {/* Play / Pause */}
         <button
           onClick={togglePlay}
-          className="flex flex-col items-center gap-1.5 group"
+          className="bg-transparent text-[#0e0b0a] flex flex-col items-center gap-1.5 group"
         >
           <div className="w-14 h-14 rounded-full bg-[#E8B567] grid place-items-center shadow-[0_0_28px_-4px_#E8B567] group-hover:scale-[1.08] transition-transform">
             {paused ? (
@@ -208,7 +212,7 @@ function BottomControls({ videoRef }: ControlsProps) {
               </svg>
             )}
           </div>
-          <span className="text-[9px] uppercase tracking-[0.2em] font-semibold text-white/60">
+          <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#0e0b0a]">
             {paused ? t('player.play') : t('player.pause')}
           </span>
         </button>
@@ -217,22 +221,21 @@ function BottomControls({ videoRef }: ControlsProps) {
         {!isLive && (
           <button
             onClick={() => seek(10)}
-            className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors group"
+            className="flex flex-col items-center gap-1 text-[#E8B567] hover:text-white transition-colors group"
           >
-            <div className="w-11 h-11 rounded-full border border-white/20 grid place-items-center group-hover:border-white/40 transition-colors">
+            <div className="w-11 h-11 rounded-full bg-[#E8B567] text-[#0e0b0a] grid place-items-center group-hover:bg-white group-hover:text-[#0e0b0a] transition-colors">
+
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                 <path d="M12 5V2l5 5-5 5V9c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/>
                 <text x="50%" y="67%" textAnchor="middle" fontSize="5" fill="currentColor" dy=".1em">10</text>
               </svg>
             </div>
-            <span className="text-[9px] uppercase tracking-[0.2em] font-semibold">+10s</span>
+            <span className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#0e0b0a]">+10s</span>
           </button>
         )}
 
         {/* Subtitle (CC) quick-toggle — right edge, visible on all content types */}
-        <div className="absolute right-0">
-          <SubtitleToggleOSDBtn />
-        </div>
+
       </div>
 
       {/* Live badge */}
@@ -291,6 +294,94 @@ export function OSD({ videoRef }: OSDProps) {
       <div className="pointer-events-auto bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-12">
         <BottomControls videoRef={videoRef} />
       </div>
+
+      {/* Setinhas de episodio nos cantos inferiores */}
+      <div className="absolute bottom-10 left-10 pointer-events-auto"><PrevEpisodeButton /></div>
+      <div className="absolute bottom-10 right-10 pointer-events-auto"><NextEpisodeButton /></div>
+
+      {/* Closed Caption no meio superior da tela */}
+      <div className="absolute top-8 right-40 pointer-events-auto"><SubtitleToggleOSDBtn /></div>
     </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function PrevEpisodeButton() {
+  const { t } = useTranslation();
+  const showToast = useToast(ss => ss.show);
+  const seriesContext = usePlayerStore(ss => ss.seriesContext);
+  const playPrevEpisode = usePlayerStore(ss => ss.playPrevEpisode);
+
+  const handle = () => {
+    const r = playPrevEpisode();
+    if (r === 'ok') showToast('◀ ' + t('player.prev_episode'));
+    else if (r === 'no_more') showToast('⚠ ' + t('player.no_more_prev'));
+  };
+
+  const { ref, focused } = useFocusable({ focusKey: 'OSD_PREV_EP', onEnterPress: handle });
+
+  if (!seriesContext || seriesContext.episodeIndex <= 0) return null;
+  return (
+    <button ref={ref as React.RefObject<HTMLButtonElement>} onClick={handle}
+      className="bg-transparent flex flex-col items-center gap-1">
+      <div className={['w-12 h-12 rounded-full grid place-items-center border-2',
+        focused ? 'bg-white text-[#0e0b0a] border-white' : 'bg-[#E8B567] text-[#0e0b0a] border-[#0e0b0a]'].join(' ')}>
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+          <path d="M19 20L9 12l10-8v16z" />
+          <path d="M5 5h2v14H5z" />
+        </svg>
+      </div>
+      <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#0e0b0a]">{t('player.prev_episode')}</span>
+    </button>
+  );
+}
+
+function NextEpisodeButton() {
+  const { t } = useTranslation();
+  const showToast = useToast(ss => ss.show);
+  const seriesContext = usePlayerStore(ss => ss.seriesContext);
+  const playNextEpisode = usePlayerStore(ss => ss.playNextEpisode);
+
+  const handle = () => {
+    const r = playNextEpisode();
+    if (r === 'ok') showToast('▶ ' + t('player.next_episode'));
+    else if (r === 'no_more') showToast('⚠ ' + t('player.no_more_next'));
+  };
+
+  const { ref, focused } = useFocusable({ focusKey: 'OSD_NEXT_EP', onEnterPress: handle });
+
+  if (!seriesContext || seriesContext.episodeIndex >= seriesContext.allEpisodes.length - 1) return null;
+  return (
+    <button ref={ref as React.RefObject<HTMLButtonElement>} onClick={handle}
+      className="bg-transparent flex flex-col items-center gap-1">
+      <div className={['w-12 h-12 rounded-full grid place-items-center border-2',
+        focused ? 'bg-white text-[#0e0b0a] border-white' : 'bg-[#E8B567] text-[#0e0b0a] border-[#0e0b0a]'].join(' ')}>
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+          <path d="M5 4l10 8-10 8V4z" />
+          <path d="M17 5h2v14h-2z" />
+        </svg>
+      </div>
+      <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#0e0b0a]">{t('player.next_episode')}</span>
+    </button>
   );
 }

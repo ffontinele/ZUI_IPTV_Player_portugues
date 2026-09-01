@@ -195,8 +195,8 @@ function ResumeCardEmpty({ onLiveTV }: { onLiveTV: () => void }) {
             className={[
               'flex items-center gap-3 px-5 h-12 rounded-full border text-[14px] font-medium tracking-wide transition-all',
               focused
-                ? 'border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/[0.08]'
-                : 'border-white/15 text-white/85 hover:bg-white/[0.04]',
+                ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a]'
+                : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
             ].join(' ')}
           >
             {t('home.go_live_tv')}
@@ -379,7 +379,7 @@ function ResumeCard({
               'flex items-center gap-3 px-5 h-12 rounded-full border text-[14px] font-medium tracking-wide transition-all',
               allFocused
                 ? 'border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/[0.06]'
-                : 'border-white/15 text-white/85 hover:bg-white/[0.04] hover:text-white',
+                : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a] hover:text-white',
             ].join(' ')}
           >
             {t('home.all_channels')}

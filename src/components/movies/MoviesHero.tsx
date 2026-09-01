@@ -175,8 +175,8 @@ export function MoviesHero({ movie }: Props) {
             className={[
               'flex items-center gap-2 px-4 h-10 rounded-full text-[13px] font-medium tracking-wide transition-all shrink-0',
               infoFocused
-                ? 'border border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/[0.08]'
-                : 'border border-white/15 text-white/80',
+                ? 'border border-2 border-white bg-[#E8B567] text-[#0e0b0a]'
+                : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
             ].join(' ')}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-4 h-4 shrink-0">
@@ -202,8 +202,8 @@ export function MoviesHero({ movie }: Props) {
                   ? 'border border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/[0.12] scale-[1.04]'
                   : 'border border-[#E8B567]/40 text-[#E8B567] bg-[#E8B567]/[0.06]'
                 : favFocused
-                  ? 'border border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/[0.08] scale-[1.04]'
-                  : 'border border-white/15 text-white/80',
+                  ? 'border border-2 border-white bg-[#E8B567] text-[#0e0b0a] scale-[1.04]'
+                  : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
             ].join(' ')}
           >
             <svg

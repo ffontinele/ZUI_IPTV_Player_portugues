@@ -34,8 +34,8 @@ function SeasonTab({
         focused
           ? 'border-[#E8B567]/55 bg-[#E8B567]/[0.12] text-[#E8B567] shadow-[0_0_16px_-6px_#E8B567] scale-[1.05]'
           : isActive
-            ? 'border-white/35 bg-white/[0.08] text-white'
-            : 'border-white/[0.08] text-white/50',
+            ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a]'
+            : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
       ].join(' ')}
     >
       S{String(seasonNum).padStart(2, '0')}
@@ -89,7 +89,7 @@ function EpisodeRow({
         'shrink-0 w-10 h-10 rounded-lg grid place-items-center text-[13px] font-bold tabular-nums border transition-all',
         focused
           ? 'border-[#E8B567]/50 bg-[#E8B567]/[0.15] text-[#E8B567]'
-          : 'border-white/[0.08] bg-white/[0.03] text-white/40',
+          : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
       ].join(' ')}>
         {String(epNum).padStart(2, '0')}
       </div>

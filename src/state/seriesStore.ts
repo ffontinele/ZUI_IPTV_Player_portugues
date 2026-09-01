@@ -296,11 +296,20 @@ export const useSeriesStore = create<SeriesStore>()(
             const epNum = String(firstEp.episode_num).padStart(2, '0');
             const epName = `${series.title} · S${seasonNum}·E${epNum}`;
 
-            usePlayerStore.getState().setSource({
+            // Salvar creds no window para playNextEpisode
+        (window as any).__ZUI_XTREAM_CREDS = creds;
+        usePlayerStore.getState().setSource({
               id: `series-${id}-s${firstSeasonKey}e${firstEp.episode_num}`,
               name: epName,
               url,
               sourceType: 'xtream',
+            });
+            usePlayerStore.getState().setSeriesContext({
+              seriesId: id,
+              seasonKey: Number(firstSeasonKey),
+              episodeIndex: 0,
+              allEpisodes: info.episodes[firstSeasonKey],
+              seriesTitle: series.title,
             });
             useUIStore.getState().navigate('player');
           } catch {
@@ -343,6 +352,7 @@ export const useSeriesStore = create<SeriesStore>()(
         const creds = getXtreamCreds();
         if (!creds) return;
 
+        (window as any).__ZUI_XTREAM_CREDS = creds;
         const url = buildSeriesEpisodeUrl(creds, episode.id, episode.container_extension);
         const seasonNum = String(Number(seasonKey)).padStart(2, '0');
         const epNum = String(episode.episode_num).padStart(2, '0');
@@ -354,6 +364,19 @@ export const useSeriesStore = create<SeriesStore>()(
           url,
           sourceType: 'xtream',
         });
+        // Salvar contexto para botao "Proximo Episodio"
+        const detailsInfo = get().detailsInfo;
+        if (detailsInfo && detailsInfo.episodes[String(seasonKey)]) {
+          const allEps = detailsInfo.episodes[String(seasonKey)];
+          const epIndex = allEps.findIndex(e => e.id === episode.id);
+          usePlayerStore.getState().setSeriesContext({
+            seriesId: get().detailsSeriesId ?? '',
+            seasonKey: Number(seasonKey),
+            episodeIndex: epIndex >= 0 ? epIndex : 0,
+            allEpisodes: allEps,
+            seriesTitle,
+          });
+        }
         get().closeSeriesDetails();
         useUIStore.getState().navigate('player');
       },

@@ -273,8 +273,8 @@ function SectionHeader() {
         className={[
           'ml-auto flex items-center gap-2 px-3 h-9 rounded-full text-[11px] uppercase tracking-[0.25em] font-semibold transition-all shrink-0',
           focused
-            ? 'border border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/[0.06] shadow-[0_0_20px_-8px_#E8B567]'
-            : 'border border-white/[0.06] text-white/55 hover:text-white',
+            ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a]'
+            : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
         ].join(' ')}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-3.5 h-3.5">

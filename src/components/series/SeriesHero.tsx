@@ -41,8 +41,8 @@ function SeasonPill({
         focused
           ? 'border border-[#E8B567]/55 bg-[#E8B567]/[0.10] text-[#E8B567] font-bold shadow-[0_0_16px_-6px_#E8B567] scale-[1.05]'
           : isActive
-            ? 'border border-white/40 bg-white/[0.08] text-white font-bold'
-            : 'border border-white/[0.08] text-white/55 font-medium',
+            ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] font-bold'
+            : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a] font-medium',
       ].join(' ')}
     >
       S{String(season).padStart(2, '0')}
@@ -287,8 +287,8 @@ export function SeriesHero({ series }: Props) {
             className={[
               'flex items-center gap-2 px-4 h-10 rounded-full text-[13px] font-medium tracking-wide transition-all shrink-0',
               infoFocused
-                ? 'border border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/[0.08]'
-                : 'border border-white/15 text-white/80',
+                ? 'border border-2 border-white bg-[#E8B567] text-[#0e0b0a]'
+                : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
             ].join(' ')}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-4 h-4 shrink-0">
@@ -315,8 +315,8 @@ export function SeriesHero({ series }: Props) {
                   ? 'border border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/[0.12] scale-[1.04]'
                   : 'border border-[#E8B567]/40 text-[#E8B567] bg-[#E8B567]/[0.06]'
                 : watchlistFocused
-                  ? 'border border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/[0.08] scale-[1.04]'
-                  : 'border border-white/15 text-white/80',
+                  ? 'border border-2 border-white bg-[#E8B567] text-[#0e0b0a] scale-[1.04]'
+                  : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
             ].join(' ')}
           >
             {/* Bookmark icon */}

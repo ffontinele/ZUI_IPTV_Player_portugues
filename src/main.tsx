@@ -15,3 +15,12 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 )
+
+import { useToast as __zuiToast } from '@/components/ui/Toast';
+window.addEventListener('error', (e) => {
+  try { __zuiToast.getState().show('⚠ ERRO: ' + (e.message ?? 'desconhecido')); } catch {}
+});
+window.addEventListener('unhandledrejection', (e) => {
+  try { __zuiToast.getState().show('⚠ PROMISE: ' + String(e.reason)); } catch {}
+});
+

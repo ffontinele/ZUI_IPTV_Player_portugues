@@ -1,35 +1,24 @@
 import { webcrypto } from 'node:crypto'
+// Node 16 polyfill: Vite 5 uses Web Crypto API internally
 if (!globalThis.crypto) {
   (globalThis as { crypto?: unknown }).crypto = webcrypto
 }
 
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import legacy from '@vitejs/plugin-legacy'
 import { resolve } from 'path'
 
 export default defineConfig({
-  plugins: [
-    react(),
-    legacy({
-      targets: ['Chrome >= 53', 'Safari >= 11', 'Firefox >= 60'],
-      additionalLegacyPolyfills: [
-        'core-js/stable',
-        'regenerator-runtime/runtime',
-      ],
-      modernPolyfills: [],
-      renderLegacyChunks: true,
-    }),
-  ],
+  plugins: [react()],
   base: './',
   resolve: {
     alias: { '@': resolve(__dirname, 'src') },
   },
   worker: {
-    format: 'iife',
+    format: 'es',
   },
   build: {
-    target: 'es2015',
+    target: 'es2019',
     outDir: 'dist',
     minify: 'terser',
     sourcemap: false,

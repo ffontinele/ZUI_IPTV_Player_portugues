@@ -8,6 +8,7 @@ import en from './locales/en.json';
 import de from './locales/de.json';
 import fr from './locales/fr.json';
 import es from './locales/es.json';
+import pt from './locales/pt.json';
 
 // Read the persisted language from localStorage before any store is created.
 // Matches the 'zui-settings' zustand persist key used by settingsStore.
@@ -17,7 +18,7 @@ function getPersistedLanguage(): string {
     if (raw) {
       const parsed = JSON.parse(raw) as { state?: { language?: string } };
       const lang = parsed.state?.language;
-      if (lang && ['tr', 'en', 'de', 'fr', 'es'].includes(lang)) return lang;
+      if (lang && ['tr', 'en', 'de', 'fr', 'es', 'pt'].includes(lang)) return lang;
     }
   } catch { /* ignore – localStorage may be unavailable */ }
   return 'tr';
@@ -32,6 +33,7 @@ void i18n
       de: { translation: de },
       fr: { translation: fr },
       es: { translation: es },
+      pt: { translation: pt },
     },
     lng: getPersistedLanguage(),
     fallbackLng: 'tr',

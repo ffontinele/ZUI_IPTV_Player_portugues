@@ -1,21 +1,28 @@
+# Dependencias
 node_modules/
+
+# Build
 dist/
 dist-ipk/
-*.ipk
+dist_LEGACY_PT/
+
+# Segredos (NUNCA subir!)
 .env
 .env.local
-.env.*.local
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
+*.local
+
+# Logs
 *.log
 npm-debug.log*
 
-# Internal dev artefacts (not for public repo)
-PROMPT_FAZ*.md
-ZUI_IPTV_Player_docs-structure.txt
-*\ -\ Kopya*.tsx
-*\ -\ Kopya*.ts
-*\ -\ Kopya\ (*).tsx
-*\ -\ Kopya\ (*).ts
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+*.ipk

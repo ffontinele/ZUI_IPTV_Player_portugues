@@ -74,15 +74,15 @@ function ActionButton({
           ? 'border-white/[0.06] text-white/20 cursor-not-allowed'
           : danger
             ? focused
-              ? 'border-red-500/50 bg-red-500/15 text-red-400 shadow-[0_0_16px_-4px_rgba(239,68,68,0.4)] scale-[1.03]'
-              : 'border-red-500/20 text-red-400/70 hover:border-red-500/40'
+              ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] scale-[1.03]'
+              : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]'
             : accent
               ? focused
-                ? 'border-[#E8B567]/60 bg-[#E8B567]/[0.12] text-[#E8B567] shadow-[0_0_20px_-4px_#E8B567] scale-[1.03]'
-                : 'border-[#E8B567]/30 bg-[#E8B567]/[0.06] text-[#E8B567]/80'
+                ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] scale-[1.03]'
+                : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]'
               : focused
-                ? 'border-[#E8B567]/45 bg-[#E8B567]/[0.08] text-[#E8B567] shadow-[0_0_16px_-4px_#E8B567] scale-[1.03]'
-                : 'border-white/[0.08] text-white/55 hover:text-white/75',
+                ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] scale-[1.03]'
+                : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
       ].join(' ')}
     >
       {loading ? (
@@ -274,7 +274,7 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
   const { ref, focused } = useFocusable({ focusKey: 'PL_EMPTY_ADD', onEnterPress: onAdd });
   return (
     <div className="flex flex-col items-center justify-center flex-1 gap-6">
-      <div className="grid place-items-center w-20 h-20 rounded-2xl border border-white/[0.06] bg-white/[0.025]">
+      <div className="grid place-items-center w-20 h-20 rounded-2xl border-2 border-[#E8B567] bg-[#E8B567]">
         <svg viewBox="0 0 24 24" className="w-9 h-9 text-white/20" fill="none" stroke="currentColor"
           strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />

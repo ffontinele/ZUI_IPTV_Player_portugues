@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 import { useUIStore } from '@/state/uiStore';
 import { usePlaylistStore } from '@/state/playlistStore';
+import { usePlayerStore } from '@/state/playerStore';
+import { useToast } from '@/components/ui/Toast';
+import { useTranslation } from 'react-i18next';
 
 export function RemoteRouter() {
   const currentScreen = useUIStore((s) => s.currentScreen);
@@ -45,12 +48,38 @@ export function RemoteRouter() {
         return;
       }
 
-      // CH+ (33) / CH- (34)
+      // CH+ (33) / CH- (34) — sempre zapeia canais
       if (e.keyCode === 33 || e.keyCode === 34) {
         if (modalOpen) return;
         if (currentScreen === 'player' || currentScreen === 'channelList') {
           e.preventDefault();
           void zapChannel(e.keyCode === 33 ? 'next' : 'prev');
+        }
+        return;
+      }
+
+      // UP (38) / DOWN (40) — inteligente por contexto
+      if (e.keyCode === 38 || e.keyCode === 40) {
+        if (modalOpen) return;
+        if (currentScreen === 'player') {
+          const last = useUIStore.getState().lastMainScreen;
+          const ctx = usePlayerStore.getState().seriesContext;
+          e.preventDefault();
+          if (last === 'series' && ctx) {
+            const r = e.keyCode === 38
+              ? usePlayerStore.getState().playNextEpisode()
+              : usePlayerStore.getState().playPrevEpisode();
+            if (r === 'no_more') {
+              const { t } = useTranslation();
+              useToast.getState().show(e.keyCode === 38 ? t('player.no_more_next') : t('player.no_more_prev'));
+            }
+          } else if (last === 'channelList' || last === 'epg') {
+            void zapChannel(e.keyCode === 38 ? 'next' : 'prev');
+          }
+          // movies: nao faz nada
+        } else if (currentScreen === 'channelList') {
+          e.preventDefault();
+          void zapChannel(e.keyCode === 38 ? 'next' : 'prev');
         }
       }
     };
