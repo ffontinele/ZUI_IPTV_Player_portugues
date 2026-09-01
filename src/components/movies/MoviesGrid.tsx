@@ -390,7 +390,7 @@ export function MoviesGrid({ focusedMovieId, onFocusMovie }: Props) {
             <MovieCard
               key={m.id}
               movie={m}
-              onSelect={() => playMovie(m.id)}
+              onSelect={() => onFocusMovie(m.id)}
               onFocus={() => onFocusMovie(m.id)}
               onToggleFavorite={() => toggleFavorite(m.id)}
             />
@@ -417,7 +417,7 @@ export function MoviesGrid({ focusedMovieId, onFocusMovie }: Props) {
           cellProps={{
             movies,
             focusedMovieId,
-            onSelectMovie: playMovie,
+            onSelectMovie: (id) => onFocusMovie(id),
           }}
           style={{ width: containerSize.width, height: containerSize.height }}
         />

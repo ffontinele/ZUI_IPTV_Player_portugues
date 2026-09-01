@@ -97,6 +97,7 @@ type MoviesStore = {
   visibleMovies: Movie[];
   categories: MovieCategory[];
   activeCategory: string;
+  detailsMovieId: string | null;
   favoriteIds: string[];
   watchProgress: Record<string, number>;   // 0–1
   sortBy: MovieSort;
@@ -117,6 +118,7 @@ type MoviesStore = {
   toggleHiddenCategory: (id: string) => void;
   playMovie: (id: string) => void;
   openMovieDetails: (id: string) => void;
+  closeMovieDetails: () => void;
 
   // Internal
   _recompute: () => void;
@@ -132,6 +134,7 @@ export const useMoviesStore = create<MoviesStore>()(
       visibleMovies: [],
       categories: [],
       activeCategory: '',
+      detailsMovieId: null,
       favoriteIds: [],
       watchProgress: {},
       hiddenCategoryIds: [],
@@ -266,8 +269,11 @@ export const useMoviesStore = create<MoviesStore>()(
       },
 
       openMovieDetails: (id) => {
-        // v1: no detail overlay — play directly
-        get().playMovie(id);
+        set({ detailsMovieId: id });
+      },
+
+      closeMovieDetails: () => {
+        set({ detailsMovieId: null });
       },
 
       // ── Internal ────────────────────────────────────────────────────────

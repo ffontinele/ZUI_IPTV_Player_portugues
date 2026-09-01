@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useUIStore } from '@/state/uiStore';
 import { usePlaylistStore } from '@/state/playlistStore';
 import { usePlayerStore } from '@/state/playerStore';
+import { useSeriesStore } from '@/state/seriesStore';
+import { useMoviesStore } from '@/state/moviesStore';
 import { useToast } from '@/components/ui/Toast';
 import { useTranslation } from 'react-i18next';
 
@@ -22,9 +24,17 @@ export function RemoteRouter() {
           closeModal();
           return;
         }
+        // Respeitar modais de detalhes (filme/serie) antes de navegar
+        const seriesDetails = useSeriesStore.getState().detailsSeriesId;
+        const movieDetails = useMoviesStore.getState().detailsMovieId;
+        if (seriesDetails || movieDetails) {
+          if (seriesDetails) useSeriesStore.getState().closeSeriesDetails();
+          if (movieDetails) useMoviesStore.getState().closeMovieDetails();
+          return;
+        }
+
         switch (currentScreen) {
           case 'player':
-            // Oynatıcıdan çık → son ana ekran (Live TV / EPG)
             navigate(useUIStore.getState().lastMainScreen);
             break;
           case 'channelList':

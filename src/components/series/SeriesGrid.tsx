@@ -435,7 +435,7 @@ export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
             <SeriesCard
               key={s.id}
               series={s}
-              onSelect={() => playSeries(s.id)}
+              onSelect={() => onFocusSeries(s.id)}
               onFocus={() => onFocusSeries(s.id)}
               onToggleWatchlist={() => toggleWatchlist(s.id)}
             />
@@ -461,7 +461,7 @@ export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
           cellProps={{
             seriesList,
             focusedSeriesId,
-            onSelectSeries: playSeries,
+            onSelectSeries: (id) => onFocusSeries(id),
           }}
           style={{ width: containerSize.width, height: containerSize.height }}
         />

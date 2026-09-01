@@ -9,6 +9,7 @@ import { useMoviesStore } from '@/state/moviesStore';
 import { MovieCategorySidebar } from '@/components/movies/MovieCategorySidebar';
 import { MoviesHero } from '@/components/movies/MoviesHero';
 import { MoviesGrid } from '@/components/movies/MoviesGrid';
+import { MovieDetailsModal } from '@/components/movies/MovieDetailsModal';
 
 export function MoviesScreen() {
   const visibleMovies = useMoviesStore(s => s.visibleMovies);
@@ -18,6 +19,7 @@ export function MoviesScreen() {
   const loadVodData = useMoviesStore(s => s.loadVodData);
 
   const { t } = useTranslation();
+  const detailsMovieId = useMoviesStore(s => s.detailsMovieId);
   const [focusedMovieId, setFocusedMovieId] = useState<string | null>(null);
 
   // Page-level focus context — declared BEFORE any conditional returns
@@ -117,6 +119,7 @@ export function MoviesScreen() {
             </main>
           </div>
         )}
+              {detailsMovieId && <MovieDetailsModal />}
       </div>
     </FocusContext.Provider>
   );

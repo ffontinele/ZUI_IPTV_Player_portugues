@@ -153,12 +153,11 @@ export function EpisodeBrowserModal() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Backspace' || e.key === 'GoBack' || e.keyCode === 461) {
-        e.preventDefault();
-        closeSeriesDetails();
+        e.preventDefault(); e.stopPropagation(); closeSeriesDetails();
       }
     };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    window.addEventListener('keydown', handler, true);
+    return () => window.removeEventListener('keydown', handler, true);
   }, [closeSeriesDetails]);
 
   const { ref, focusKey, setFocus } = useFocusable({
@@ -279,9 +278,15 @@ export function EpisodeBrowserModal() {
             )}
 
             {/* Footer hint */}
-            <div className="mt-auto pt-3 text-[10px] uppercase tracking-[0.3em] text-white/20 font-semibold">
-              {t('episode_browser.back_hint')}
-            </div>
+            <button
+              onClick={closeSeriesDetails}
+              className="mt-auto pt-3 flex items-center gap-2 px-3 h-9 rounded-full border border-[#E8B567]/55 text-[#E8B567] text-[11px] uppercase tracking-[0.25em] font-semibold hover:bg-[#E8B567]/10 transition-all"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
+                <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Voltar
+            </button>
           </div>
 
           {/* ── Right panel: episode list ── */}
