@@ -19,3 +19,8 @@
 npm run build
 node scripts_legacy/make-legacy-tv.cjs
 ares-package dist
+
+## 📱 Painel Web QR Code
+- URL: https://ffontinele.github.io/ZUI_IPTV_Player_portugues/painel_web/
+- QR aponta para: URL?id=SHORT_ID&key=DEVICE_KEY
+- Preenche TV ID e Chave automaticamente via URL params
