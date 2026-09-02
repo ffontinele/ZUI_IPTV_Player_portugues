@@ -168,7 +168,9 @@ export const useMoviesStore = create<MoviesStore>()(
             }
           }
           const { favoriteIds, watchProgress, sortBy } = get();
-          const sorted = sortMovies(allMovies, sortBy);
+          const catLabelMap = new Map(rawCategories.map(c => [c.id, c.label]));
+          const labeledMovies = allMovies.map(m => ({ ...m, categoryLabel: catLabelMap.get(m.categoryId ?? '') }));
+          const sorted = sortMovies(labeledMovies, sortBy);
           const categories = buildCategories(rawCategories, sorted, favoriteIds, watchProgress);
           const newThisWeekCount = sorted.filter(m => m.isNew).length;
 

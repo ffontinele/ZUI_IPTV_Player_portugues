@@ -149,8 +149,8 @@ function BackButton({ focusKey: fk, onPress }: { focusKey: string; onPress: () =
         // self-start: flex-col içinde gereksiz genişlemeyi önler
         'self-start inline-flex items-center gap-2 pl-3 pr-4 py-2 rounded-full text-[12px] font-semibold tracking-wide transition-all duration-150',
         focused
-          ? 'bg-white/12 text-white border border-white/25 scale-[1.05] shadow-[0_0_12px_rgba(255,255,255,0.06)]'
-          : 'bg-white/[0.05] text-white/45 border border-white/[0.08]',
+          ? 'bg-[#E8B567] text-[#0e0b0a] border-2 border-white scale-[1.05] shadow-[0_0_20px_-4px_#E8B567] font-bold'
+          : 'bg-[#E8B567] text-[#0e0b0a] border-2 border-[#E8B567]/70 font-bold',
       ].join(' ')}
     >
       <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor"
@@ -401,9 +401,9 @@ function CloudStep({ onBack }: { onBack: () => void; onSuccess?: () => void }) {
       <div className="flex-1 flex flex-col items-center justify-end pb-4 gap-3 mt-6">
         {/* QR, TV Kimliği + Cihaz Anahtarı'nı URL parametresi olarak içerir.
             Taranan telefon web arayüzüne doğrudan doğrulamaya hazır şekilde açılır. */}
-        <div className="w-[220px] h-[220px] rounded-2xl border border-white/10 bg-white p-2.5 overflow-hidden">
+        <div className="w-[450px] h-[450px] rounded-2xl border border-white/10 bg-white p-3 overflow-hidden">
           <img
-            src={`https://api.qrserver.com/v1/create-qr-code/?size=440x440&data=${encodeURIComponent(`https://ffontinele.github.io/ZUI_IPTV_Player_portugues/painel_web/?id=${shortDeviceId}&key=${deviceKey}`)}&margin=0`}
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(`https://ffontinele.github.io/ZUI_IPTV_Player_portugues/painel_web/?id=${shortDeviceId}&key=${deviceKey}`)}&margin=0`}
             alt={t('onboarding.qr_alt')}
             className="w-full h-full rounded-lg object-cover"
           />

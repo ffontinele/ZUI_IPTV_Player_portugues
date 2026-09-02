@@ -249,7 +249,8 @@ function ModalBase({
             <h2 className="font-serif text-[28px] font-light text-white tracking-tight">{title}</h2>
             <button
               onClick={onClose}
-              className="text-white/35 hover:text-white/70 transition-colors text-lg leading-none"
+              className="w-9 h-9 grid place-items-center rounded-full bg-red-500 text-white hover:bg-red-400 hover:scale-110 transition-all text-[18px] leading-none font-bold shadow-[0_0_16px_-4px_rgba(239,68,68,0.6)]"
+              aria-label="Fechar"
             >
               ✕
             </button>
@@ -263,7 +264,7 @@ function ModalBase({
 
 // ─── Modal close button ───────────────────────────────────────────────────────
 
-function ModalCloseBtn({ focusKey: btnKey, onPress, label = 'Kapat' }: { focusKey: string; onPress: () => void; label?: string }) {
+function ModalCloseBtn({ focusKey: btnKey, onPress, label = 'Fechar' }: { focusKey: string; onPress: () => void; label?: string }) {
   const { ref, focused } = useFocusable({ focusKey: btnKey, onEnterPress: onPress });
   return (
     <button

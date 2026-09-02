@@ -30,6 +30,8 @@ export interface Series {
   gradient?: [string, string];
   tags?: string[];
   categoryId?: string;
+  /** Rotulo da categoria Xtream (badge no card) */
+  categoryLabel?: string;
   /** Raw Xtream series_id (used for get_series_info calls) */
   seriesId?: number;
   /** Currently-watching episode (from persisted store) */

@@ -94,6 +94,13 @@ function VirtualMovieCellInner({
           </div>
         )}
 
+        {/* Category badge */}
+        {movie.categoryLabel && (
+          <div className="absolute bottom-2.5 left-2.5 px-2 h-5 rounded-md bg-black/60 backdrop-blur-sm max-w-[75%]">
+            <span className="block truncate text-[8px] font-bold uppercase tracking-wider text-[#E8B567] leading-5">{movie.categoryLabel}</span>
+          </div>
+        )}
+
         <div className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 h-6 rounded-md bg-black/55 backdrop-blur-sm text-[11px] font-bold text-[#E8B567] tabular-nums">
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -112,7 +119,7 @@ function VirtualMovieCellInner({
         )}
 
         {progress > 0 && (
-          <div className="absolute left-3 right-3 bottom-3 h-[3px] rounded-full bg-white/15 overflow-hidden">
+          <div className="absolute left-0 right-0 bottom-0 h-[3px] rounded-full bg-white/15 overflow-hidden">
             <div className="h-full bg-[#E8B567] shadow-[0_0_8px_#E8B567]" style={{ width: `${progress * 100}%` }} />
           </div>
         )}
@@ -266,10 +273,10 @@ function SectionHeader() {
           className={[
             'flex items-center gap-2 px-3 h-9 rounded-full text-[11px] uppercase tracking-[0.25em] font-semibold transition-all shrink-0',
             confirmClear
-              ? 'border-2 border-white bg-red-500 text-white'
+              ? 'border-2 border-white bg-red-500 text-white font-bold'
               : clearFocused
-                ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a]'
-                : 'border-2 border-[#E8B567]/60 text-[#E8B567]',
+                ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] font-bold scale-[1.04]'
+                : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a] font-bold',
           ].join(' ')}
         >
           {confirmClear ? 'Confirmar?' : (activeCategory === '__resume__' ? 'Limpar historico' : 'Limpar favoritos')}

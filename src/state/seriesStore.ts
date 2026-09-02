@@ -189,8 +189,10 @@ export const useSeriesStore = create<SeriesStore>()(
             }
           }
           const { watchlistIds, watchProgress, sortBy } = get();
-          const ceMap = get().currentEpisode;
-      const sorted = sortSeries(allSeries, sortBy).map(sr => {
+          const catLabelMap = new Map(rawCategories.map(c => [c.id, c.label]));
+      const labeledSeries = allSeries.map(sr => ({ ...sr, categoryLabel: catLabelMap.get(sr.categoryId ?? '') }));
+      const ceMap = get().currentEpisode;
+      const sorted = sortSeries(labeledSeries, sortBy).map(sr => {
         const ce = ceMap[sr.id];
         return ce ? { ...sr, currentEpisode: ce } : sr;
       });

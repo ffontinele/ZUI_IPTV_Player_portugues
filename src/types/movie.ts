@@ -36,4 +36,6 @@ export interface Movie {
   containerExtension?: string;
   /** Xtream category id — used for client-side category filtering */
   categoryId?: string;
+  /** Rotulo da categoria Xtream (badge no card) */
+  categoryLabel?: string;
 }

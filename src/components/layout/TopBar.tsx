@@ -68,6 +68,20 @@ const SettingsIcon = () => (
   </svg>
 );
 
+// ─── Short labels for TopBar ───────────────────────────────────────────────────
+
+function shortNavLabel(label: string): string {
+  const l = label.toLocaleLowerCase('pt-BR');
+
+  if (l.includes('início') || l.includes('inicio') || l.includes('home')) return 'Início';
+  if (l.includes('ao vivo') || l.includes('live') || l.includes('tv')) return 'TV';
+  if (l.includes('filme') || l.includes('movie')) return 'Filme';
+  if (l.includes('série') || l.includes('serie') || l.includes('series')) return 'Série';
+  if (l.includes('config') || l.includes('settings')) return 'Config';
+
+  return label;
+}
+
 // ─── NavButton ────────────────────────────────────────────────────────────────
 
 function NavButton({
@@ -95,19 +109,19 @@ function NavButton({
         focused
           ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] scale-[1.08] shadow-[0_0_32px_-4px_rgba(255,255,255,0.6)]'
           : active
-            ? 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a] shadow-[0_0_20px_-8px_#E8B567]'
-            : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
+            ? 'border-2 border-[#E8B567]/70 bg-[#E8B567]/[0.30] text-[#FFE9C4] shadow-[0_0_22px_-6px_#E8B567]'
+            : 'border border-white/10 bg-white/[0.07] text-[#E8B567]',
       ].join(' ')}
     >
       {icon}
       {active && (
-        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#E8B567] shadow-[0_0_8px_#E8B567]" />
+        <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#FFE9C4] shadow-[0_0_8px_#E8B567]" />
       )}
       <span className={[
         'absolute top-full mt-1.5 left-1/2 -translate-x-1/2 text-[9px] uppercase tracking-[0.3em] whitespace-nowrap font-semibold',
-        focused ? 'text-white' : 'text-[#E8B567]',
+        focused ? 'text-white' : active ? 'text-[#FFE9C4] font-bold' : 'text-[#E8B567]/80',
       ].join(' ')}>
-        {label}
+        {shortNavLabel(label)}
       </span>
     </button>
   );
