@@ -51,3 +51,7 @@ ares-package dist
 ## 🎨 Ajustes visuais finais (03-09-2026)
 - TopBar no padrao visual dos cards: fundo cinza nos itens normais e amarelo esmaecido no item ativo
 - Labels do TopBar abreviados para evitar sobreposicao: Inicio, TV, Filme, Serie, Config
+
+## 🎨 Ajustes visuais finais (03-09-2026)
+- TopBar no padrao visual dos cards: fundo cinza nos itens normais e amarelo esmaecido no item ativo
+- Labels do TopBar abreviados para evitar sobreposicao: Inicio, TV, Filme, Serie, Config
