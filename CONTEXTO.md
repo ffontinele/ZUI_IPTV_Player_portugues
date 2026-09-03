@@ -55,3 +55,7 @@ ares-package dist
 ## 🎨 Ajustes visuais finais (03-09-2026)
 - TopBar no padrao visual dos cards: fundo cinza nos itens normais e amarelo esmaecido no item ativo
 - Labels do TopBar abreviados para evitar sobreposicao: Inicio, TV, Filme, Serie, Config
+
+## 📺 Ajustes finais (03-09-2026 - parte 2)
+- Player: mensagem de erro some quando novo video comeca a tocar (deixa de ser infinita)
+- TV ao vivo: botao "Limpar historico" na categoria Recentes (estilo igual aos de Filmes/Series)

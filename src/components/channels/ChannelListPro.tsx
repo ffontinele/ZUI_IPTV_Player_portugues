@@ -127,6 +127,28 @@ export function ChannelListPro({
   const listRef = useRef<ListImperativeAPI>(null);
   const [containerHeight, setContainerHeight] = useState(600);
 
+  const [confirmClear, setConfirmClear] = useState(false);
+  const confirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleClearRecent = () => {
+    if (!confirmClear) {
+      setConfirmClear(true);
+      if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+      confirmTimerRef.current = setTimeout(() => setConfirmClear(false), 3000);
+      return;
+    }
+    if (confirmTimerRef.current) clearTimeout(confirmTimerRef.current);
+    setConfirmClear(false);
+    usePlaylistStore.setState({ recentIds: [] });
+  };
+
+  const { ref: clearRef, focused: clearFocused } = useFocusable({
+    focusKey: 'CHANNEL_CLEAR_RECENT',
+    onEnterPress: handleClearRecent,
+  });
+
+
+
   // Track focused index for imperative D-pad navigation in virtualized mode
   const focusedIndexRef = useRef(0);
 
@@ -249,13 +271,30 @@ export function ChannelListPro({
   }, [measuredRef, focusRef]);
 
   const header = (
-    <div className="flex items-baseline justify-between py-3 mb-2 border-b border-border-subtle">
+    <div className="flex items-center justify-between py-3 mb-2 border-b border-border-subtle">
       <span className="font-serif italic text-[22px] font-light text-white">
         {categoryLabel}
       </span>
-      <span className="text-[11px] uppercase tracking-[0.3em] text-white/40">
-        {t('channel_list.channel_count', { count: channels.length })}
-      </span>
+      {activeCategory === '__recent__' ? (
+        <button
+          ref={clearRef as React.RefObject<HTMLButtonElement>}
+          onClick={handleClearRecent}
+          className={[
+            'flex items-center gap-2 px-3 h-9 rounded-full text-[11px] uppercase tracking-[0.25em] font-semibold transition-all shrink-0',
+            confirmClear
+              ? 'border-2 border-white bg-red-500 text-white font-bold'
+              : clearFocused
+                ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] font-bold scale-[1.04]'
+                : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a] font-bold',
+          ].join(' ')}
+        >
+          {confirmClear ? 'Confirmar?' : 'Limpar historico'}
+        </button>
+      ) : (
+        <span className="text-[11px] uppercase tracking-[0.3em] text-white/40">
+          {t('channel_list.channel_count', { count: channels.length })}
+        </span>
+      )}
     </div>
   );
 
