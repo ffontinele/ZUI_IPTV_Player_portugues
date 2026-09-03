@@ -50,7 +50,7 @@ export const useSettingsStore = create<SettingsStore>()(
   persist(
     (set) => ({
       timeFormat:      '24h',
-      language:        'tr',
+      language:        'pt',
       subtitleEnabled: true,
       subtitleSize:    'medium',
 

@@ -36,7 +36,7 @@ void i18n
       pt: { translation: pt },
     },
     lng: getPersistedLanguage(),
-    fallbackLng: 'tr',
+    fallbackLng: 'pt',
     interpolation: {
       escapeValue: false, // React already escapes
     },

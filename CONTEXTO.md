@@ -59,3 +59,7 @@ ares-package dist
 ## 📺 Ajustes finais (03-09-2026 - parte 2)
 - Player: mensagem de erro some quando novo video comeca a tocar (deixa de ser infinita)
 - TV ao vivo: botao "Limpar historico" na categoria Recentes (estilo igual aos de Filmes/Series)
+
+## 🌐 Padrao de idioma (03-09-2026 - parte 4)
+- Idioma padrao do app agora e portugues (pt) em instalacoes novas
+- Antes era turco (tr) — causava instalacoes em outro idioma
