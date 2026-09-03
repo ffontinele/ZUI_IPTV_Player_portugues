@@ -58,12 +58,20 @@ export function RemoteRouter() {
         return;
       }
 
-      // CH+ (33) / CH- (34) — sempre zapeia canais
+      // CH+ (33) / CH- (34) — zapeia canais apenas na TV ao vivo
+      // Durante filme ou serie: tecla nao faz nada (nao sai do conteudo)
       if (e.keyCode === 33 || e.keyCode === 34) {
         if (modalOpen) return;
-        if (currentScreen === 'player' || currentScreen === 'channelList') {
+        if (currentScreen === 'channelList') {
           e.preventDefault();
           void zapChannel(e.keyCode === 33 ? 'next' : 'prev');
+        } else if (currentScreen === 'player') {
+          const last = useUIStore.getState().lastMainScreen;
+          if (last === 'channelList' || last === 'epg') {
+            e.preventDefault();
+            void zapChannel(e.keyCode === 33 ? 'next' : 'prev');
+          }
+          // movies/series: nao faz nada
         }
         return;
       }

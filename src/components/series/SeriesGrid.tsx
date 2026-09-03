@@ -2,7 +2,8 @@
 // Mirrors MoviesGrid; key differences: series badges + status chip,
 // watchlist instead of favorites on long-press.
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import { LocalSearchInput } from '@/components/ui/LocalSearchInput';
 import { Grid } from 'react-window';
 import type { GridImperativeAPI } from 'react-window';
 import type { CSSProperties, ReactElement } from 'react';
@@ -337,7 +338,18 @@ function SectionHeader() {
 
 export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
   const { t } = useTranslation();
-  const seriesList = useSeriesStore(s => s.visibleSeries);
+  const baseSeriesList = useSeriesStore(s => s.visibleSeries);
+  const activeCategory = useSeriesStore(s => s.activeCategory);
+  const activeCategoryLabel = useSeriesStore(s =>
+    s.categories.find(c => c.id === s.activeCategory)?.label ?? ''
+  );
+  const [localSearch, setLocalSearch] = useState('');
+  const seriesList = useMemo(() => {
+    if (!localSearch.trim()) return baseSeriesList;
+    const q = localSearch.toLocaleLowerCase('pt');
+    return baseSeriesList.filter(x => x.title.toLocaleLowerCase('pt').includes(q));
+  }, [baseSeriesList, localSearch]);
+  const showLocalSearch = !['__resume__', '__watchlist__'].includes(activeCategory);
   const toggleWatchlist = useSeriesStore(s => s.toggleWatchlist);
   const playSeries = useSeriesStore(s => s.playSeries);
 
@@ -462,8 +474,11 @@ export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
     return (
       <>
         <SectionHeader />
+      {showLocalSearch && (
+        <LocalSearchInput focusKey="SERIES_LOCAL_SEARCH" value={localSearch} onChange={setLocalSearch} categoryLabel={activeCategoryLabel} />
+      )}
         <div className="flex-1 grid place-items-center text-white/40 font-serif italic text-[16px]">
-          {t('grid.series_empty')}
+          {localSearch.trim() ? t('grid.no_results_local') : t('grid.series_empty')}
         </div>
       </>
     );
@@ -474,6 +489,9 @@ export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
     return (
       <FocusContext.Provider value={focusKey}>
         <SectionHeader />
+      {showLocalSearch && (
+        <LocalSearchInput focusKey="SERIES_LOCAL_SEARCH" value={localSearch} onChange={setLocalSearch} categoryLabel={activeCategoryLabel} />
+      )}
         <div
           ref={focusRef as React.RefObject<HTMLDivElement>}
           className="grid grid-cols-5 gap-5 flex-1 min-h-0 overflow-y-auto pr-1 pb-2"
@@ -496,6 +514,9 @@ export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
   return (
     <>
       <SectionHeader />
+      {showLocalSearch && (
+        <LocalSearchInput focusKey="SERIES_LOCAL_SEARCH" value={localSearch} onChange={setLocalSearch} categoryLabel={activeCategoryLabel} />
+      )}
       <div ref={combinedRef} className="flex-1 min-h-0 overflow-hidden">
         <Grid
           gridRef={gridRef}

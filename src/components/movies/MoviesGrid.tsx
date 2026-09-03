@@ -2,7 +2,8 @@
 // For < 50 movies: non-virtualized (MovieCard with norigin focus).
 // For 50+ movies: react-window Grid with D-pad managed in parent useFocusable.
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import { LocalSearchInput } from '@/components/ui/LocalSearchInput';
 import { Grid } from 'react-window';
 import type { GridImperativeAPI } from 'react-window';
 import type { CSSProperties, ReactElement } from 'react';
@@ -290,7 +291,18 @@ function SectionHeader() {
 
 export function MoviesGrid({ focusedMovieId, onFocusMovie }: Props) {
   const { t } = useTranslation();
-  const movies = useMoviesStore(s => s.visibleMovies);
+  const baseMovies = useMoviesStore(s => s.visibleMovies);
+  const activeCategory = useMoviesStore(s => s.activeCategory);
+  const activeCategoryLabel = useMoviesStore(s =>
+    s.categories.find(c => c.id === s.activeCategory)?.label ?? ''
+  );
+  const [localSearch, setLocalSearch] = useState('');
+  const movies = useMemo(() => {
+    if (!localSearch.trim()) return baseMovies;
+    const q = localSearch.toLocaleLowerCase('pt');
+    return baseMovies.filter(m => m.title.toLocaleLowerCase('pt').includes(q));
+  }, [baseMovies, localSearch]);
+  const showLocalSearch = !['__resume__', '__favorites__'].includes(activeCategory);
   const toggleFavorite = useMoviesStore(s => s.toggleFavorite);
   const playMovie = useMoviesStore(s => s.playMovie);
 
@@ -416,8 +428,11 @@ export function MoviesGrid({ focusedMovieId, onFocusMovie }: Props) {
     return (
       <>
         <SectionHeader />
+      {showLocalSearch && (
+        <LocalSearchInput focusKey="MOVIES_LOCAL_SEARCH" value={localSearch} onChange={setLocalSearch} categoryLabel={activeCategoryLabel} />
+      )}
         <div className="flex-1 grid place-items-center text-white/40 font-serif italic text-[16px]">
-          {t('grid.movies_empty')}
+          {localSearch.trim() ? t('grid.no_results_local') : t('grid.movies_empty')}
         </div>
       </>
     );
@@ -429,6 +444,9 @@ export function MoviesGrid({ focusedMovieId, onFocusMovie }: Props) {
     return (
       <FocusContext.Provider value={focusKey}>
         <SectionHeader />
+      {showLocalSearch && (
+        <LocalSearchInput focusKey="MOVIES_LOCAL_SEARCH" value={localSearch} onChange={setLocalSearch} categoryLabel={activeCategoryLabel} />
+      )}
         <div
           ref={focusRef as React.RefObject<HTMLDivElement>}
           className="grid grid-cols-5 gap-5 flex-1 min-h-0 overflow-y-auto pr-1 pb-2"
@@ -452,6 +470,9 @@ export function MoviesGrid({ focusedMovieId, onFocusMovie }: Props) {
   return (
     <>
       <SectionHeader />
+      {showLocalSearch && (
+        <LocalSearchInput focusKey="MOVIES_LOCAL_SEARCH" value={localSearch} onChange={setLocalSearch} categoryLabel={activeCategoryLabel} />
+      )}
       <div ref={combinedRef} className="flex-1 min-h-0 overflow-hidden">
         <Grid
           gridRef={gridRef}

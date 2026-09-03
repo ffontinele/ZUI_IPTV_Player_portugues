@@ -63,3 +63,22 @@ ares-package dist
 ## 🌐 Padrao de idioma (03-09-2026 - parte 4)
 - Idioma padrao do app agora e portugues (pt) em instalacoes novas
 - Antes era turco (tr) — causava instalacoes em outro idioma
+
+## 🔧 Ajustes finais (03-09-2026 - parte 5)
+
+### Player: setas e teclas de canal
+- Setas de episódio (prev/next) agora só aparecem quando estamos em série
+- Teclas CH+/CH- do controle agora só funcionam na TV ao vivo
+- Durante filme ou série: CH+/CH- não faz nada (não sai do conteúdo)
+- Corrigido bug: ao sair de série e abrir filme, as setas não apareciam mais
+
+### Modal de Séries (EpisodeBrowserModal)
+- Botão de voltar padronizado: fundo amarelo sólido + texto preto + bold
+- Mesma configuração visual do botão "Limpar histórico"
+
+### Busca por categoria (lupa local)
+- Adicionada lupa dentro da grade de filmes/séries
+- Filtra só os itens da categoria ativa (leve, sem pesar memória)
+- Placeholder dinâmico: "Buscar em Animes...", "Buscar em Netflix..."
+- Busca global (topo) continua funcionando em paralelo
+- Traduções adicionadas em pt.json

@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFocusable } from '@noriginmedia/norigin-spatial-navigation';
 import { usePlayerStore } from '@/state/playerStore';
+import { useUIStore } from '@/state/uiStore';
 import { useSettingsStore, LANGUAGE_LOCALES } from '@/state/settingsStore';
 import { useToast } from '@/components/ui/Toast';
 
@@ -295,9 +296,13 @@ export function OSD({ videoRef }: OSDProps) {
         <BottomControls videoRef={videoRef} />
       </div>
 
-      {/* Setinhas de episodio nos cantos inferiores */}
-      <div className="absolute bottom-10 left-10 pointer-events-auto"><PrevEpisodeButton /></div>
-      <div className="absolute bottom-10 right-10 pointer-events-auto"><NextEpisodeButton /></div>
+      {/* Setinhas de episodio: aparecem apenas quando estamos em serie */}
+      {useUIStore.getState().lastMainScreen === 'series' && (
+        <>
+          <div className="absolute bottom-10 left-10 pointer-events-auto"><PrevEpisodeButton /></div>
+          <div className="absolute bottom-10 right-10 pointer-events-auto"><NextEpisodeButton /></div>
+        </>
+      )}
 
       {/* Closed Caption no meio superior da tela */}
       <div className="absolute top-8 right-40 pointer-events-auto"><SubtitleToggleOSDBtn /></div>

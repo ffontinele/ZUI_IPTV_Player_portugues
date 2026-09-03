@@ -288,7 +288,7 @@ export function EpisodeBrowserModal() {
             {/* Footer hint */}
             <button
               onClick={closeSeriesDetails}
-              className="mt-auto pt-3 flex items-center gap-2 px-3 h-9 rounded-full border border-[#E8B567]/55 text-[#E8B567] text-[11px] uppercase tracking-[0.25em] font-semibold hover:bg-[#E8B567]/10 transition-all"
+              className='mt-auto pt-3 flex items-center gap-2 px-3 h-9 rounded-full border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a] text-[11px] uppercase tracking-[0.25em] font-bold transition-all'
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
                 <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />

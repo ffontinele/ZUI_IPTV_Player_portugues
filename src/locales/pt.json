@@ -393,7 +393,10 @@
     "new_episode_count": "+{{count}} novos episódios",
     "all": "Todos",
     "series_empty": "Nenhuma série nesta categoria.",
-    "movies_empty": "Nenhum filme nesta categoria."
+    "movies_empty": "Nenhum filme nesta categoria.",
+    "search_in": "Buscar em {{category}}...",
+    "search_here": "Buscar aqui...",
+    "no_results_local": "Nenhum resultado nesta categoria"
   },
   "epg": {
     "title": "📡 Guia de TV",
