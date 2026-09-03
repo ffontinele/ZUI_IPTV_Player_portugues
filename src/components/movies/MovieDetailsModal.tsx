@@ -160,14 +160,10 @@ export function MovieDetailsModal() {
                   useToast.getState().show(adding ? t('hero.fav_added') : t('hero.fav_removed'));
                 }}
                 className={[
-                  'flex items-center gap-2 px-5 h-12 rounded-full text-[14px] font-medium transition-all',
-                  isFavorite
-                    ? favFocused
-                      ? 'border border-[#E8B567]/55 text-[#E8B567] bg-[#E8B567]/12 scale-105'
-                      : 'border border-[#E8B567]/40 text-[#E8B567] bg-[#E8B567]/6'
-                    : favFocused
-                      ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] scale-105'
-                      : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
+                  'flex items-center gap-2 px-5 h-12 rounded-full text-[14px] font-bold transition-all',
+                  favFocused
+                    ? 'border-2 border-white bg-[#E8B567] text-[#0e0b0a] scale-105 shadow-[0_0_40px_-4px_#E8B567]'
+                    : 'border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a]',
                 ].join(' ')}
               >
                 <svg viewBox="0 0 24 24" fill={isFavorite ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.6" className="w-5 h-5">
@@ -178,7 +174,7 @@ export function MovieDetailsModal() {
 
               <button
                 onClick={closeMovieDetails}
-                className="ml-auto px-5 h-12 rounded-full border border-white/15 text-white/70 text-[14px] font-medium hover:bg-white/5 transition-all"
+                className='ml-auto px-5 h-12 rounded-full border-2 border-[#E8B567] bg-[#E8B567] text-[#0e0b0a] text-[14px] font-bold transition-all'
               >
                 Fechar
               </button>

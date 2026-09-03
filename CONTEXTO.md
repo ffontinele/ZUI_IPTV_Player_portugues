@@ -82,3 +82,12 @@ ares-package dist
 - Placeholder dinâmico: "Buscar em Animes...", "Buscar em Netflix..."
 - Busca global (topo) continua funcionando em paralelo
 - Traduções adicionadas em pt.json
+
+## 🎨 Ajustes visuais finais (03-09-2026 - parte 6)
+
+### Modal de detalhes de filmes (MovieDetailsModal)
+- Botão Favoritar padronizado: amarelo sólido + texto preto + bold
+- Botão Fechar padronizado: amarelo sólido + texto preto + bold
+- Agora os 3 botões (Assistir, Favoritar, Fechar) têm visual idêntico
+- Focado: borda branca + scale + glow amarelo
+- Consistente com: Limpar histórico, Voltar do modal de séries, Play do modal de séries
