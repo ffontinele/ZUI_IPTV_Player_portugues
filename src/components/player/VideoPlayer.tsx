@@ -92,6 +92,36 @@ export function VideoPlayer() {
   }, [subtitleEnabled]);
 
   usePlayer(videoRef, onFatalError);
+
+  // Limpa a mensagem de erro quando o video comeca a tocar
+  // (novo canal/video selecionado -> erro antigo deixa de ser infinito)
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const handlePlaying = () => setPersistentError(null);
+    v.addEventListener('playing', handlePlaying);
+    return () => v.removeEventListener('playing', handlePlaying);
+  }, []);
+
+  // Limpa a mensagem de erro quando o video comeca a tocar
+  // (novo canal/video selecionado -> erro antigo deixa de ser infinito)
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const handlePlaying = () => setPersistentError(null);
+    v.addEventListener('playing', handlePlaying);
+    return () => v.removeEventListener('playing', handlePlaying);
+  }, []);
+
+  // Limpa a mensagem de erro quando o video comeca a tocar
+  // (novo canal/video selecionado -> erro antigo deixa de ser infinito)
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const handlePlaying = () => setPersistentError(null);
+    v.addEventListener('playing', handlePlaying);
+    return () => v.removeEventListener('playing', handlePlaying);
+  }, []);
   useRemote(videoRef);
   useWatchProgress(videoRef);
   useAudioWatchdog(videoRef);
