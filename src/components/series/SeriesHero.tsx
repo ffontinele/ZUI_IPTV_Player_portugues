@@ -256,6 +256,13 @@ export function SeriesHero({ series }: Props) {
               </div>
             </FocusContext.Provider>
           )}
+
+          {/* Synopsis */}
+          {series.synopsis && (
+            <p className="text-[13px] text-white/55 leading-relaxed line-clamp-6 max-w-[640px] mt-2.5 italic">
+              "{series.synopsis}"
+            </p>
+          )}
         </div>
 
         {/* Bottom: CTA buttons */}

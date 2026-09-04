@@ -7,7 +7,7 @@ import { persist } from 'zustand/middleware';
 import { useSourceStore } from '@/state/sourceStore';
 import { usePlayerStore } from '@/state/playerStore';
 import { useUIStore } from '@/state/uiStore';
-import { getVodCategories, getVodStreams, buildVodUrl } from '@/services/vod.service';
+import { getVodCategories, getVodStreams, buildVodUrl, getVodInfo } from '@/services/vod.service';
 import type { Movie, MovieCategory, MovieSort } from '@/types/movie';
 import type { XtreamCredentials } from '@/types/xtream';
 
@@ -103,6 +103,7 @@ type MoviesStore = {
   error: string | null;
 
   hiddenCategoryIds: string[];
+  synopsisCache: Record<string, string>;
 
   // Actions
   loadVodData: () => Promise<void>;
@@ -114,6 +115,7 @@ type MoviesStore = {
   clearResume: () => void;
   clearFavorites: () => void;
   toggleHiddenCategory: (id: string) => void;
+  fetchSynopsis: (movieId: string) => Promise<void>;
   playMovie: (id: string) => void;
   openMovieDetails: (id: string) => void;
   closeMovieDetails: () => void;
@@ -136,6 +138,7 @@ export const useMoviesStore = create<MoviesStore>()(
       favoriteIds: [],
       watchProgress: {},
       hiddenCategoryIds: [],
+      synopsisCache: {},
       sortBy: 'added',
       categorySearch: '',
       newThisWeekCount: 0,
@@ -291,6 +294,32 @@ export const useMoviesStore = create<MoviesStore>()(
           sourceType: 'xtream',
         });
         useUIStore.getState().navigate('player');
+      },
+
+      fetchSynopsis: async (movieId) => {
+        if (get().synopsisCache[movieId] !== undefined) return;
+
+        const existing = get().allMovies.find(m => m.id === movieId);
+        if (!existing || !existing.streamId) return;
+
+        if (existing.synopsis) {
+          set({ synopsisCache: { ...get().synopsisCache, [movieId]: existing.synopsis } });
+          return;
+        }
+
+        const creds = getXtreamCreds();
+        if (!creds) return;
+        const streamId = existing.streamId;
+
+        try {
+          const info = await getVodInfo(creds, streamId);
+          const plot = info?.info?.plot?.trim() ?? '';
+          // SOMENTE o cache é atualizado — visibleMovies não muda,
+          // portanto o foco da grade NÃO é resetado (sem pulo de seleção).
+          set({ synopsisCache: { ...get().synopsisCache, [movieId]: plot } });
+        } catch {
+          // falha silenciosa — hero simplesmente sem sinopse
+        }
       },
 
       openMovieDetails: (id) => {

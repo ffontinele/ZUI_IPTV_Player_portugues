@@ -3,6 +3,7 @@
 //     floating poster card only when backdrop ≠ poster, stronger overlays,
 //     44px editorial title. Content is absolutely-positioned so height is fixed.
 
+import { useEffect } from 'react';
 import { useFocusable } from '@noriginmedia/norigin-spatial-navigation';
 import { useTranslation } from 'react-i18next';
 import { useMoviesStore } from '@/state/moviesStore';
@@ -19,6 +20,22 @@ export function MoviesHero({ movie }: Props) {
   const openMovieDetails = useMoviesStore(s => s.openMovieDetails);
   const toggleFavorite  = useMoviesStore(s => s.toggleFavorite);
   const isFavorite      = useMoviesStore(s => movie ? s.favoriteIds.includes(movie.id) : false);
+  const fetchSynopsis  = useMoviesStore(s => s.fetchSynopsis);
+  const cachedSynopsis = useMoviesStore(s => (movie ? s.synopsisCache[movie.id] : undefined));
+  const synopsis       = cachedSynopsis || movie?.synopsis;
+
+
+
+  // Busca a sinopse em background quando o filme focado não tem uma.
+  // Escreve apenas no synopsisCache — não toca em visibleMovies,
+  // então o foco da grade NÃO é resetado (sem pulo de seleção).
+  useEffect(() => {
+    if (!movie || !movie.streamId) return;
+    if (movie.synopsis) return;
+    if (cachedSynopsis !== undefined) return;
+    const timer = setTimeout(() => { void fetchSynopsis(movie.id); }, 400);
+    return () => clearTimeout(timer);
+  }, [movie?.id, movie?.streamId, movie?.synopsis, cachedSynopsis, fetchSynopsis]);
 
   // All hooks must be unconditional — placed before the null-return guard.
   const { ref: playRef, focused: playFocused } = useFocusable({
@@ -146,6 +163,13 @@ export function MoviesHero({ movie }: Props) {
               </span>
             ))}
           </div>
+
+          {/* Synopsis */}
+          {synopsis && (
+            <p className="text-[13px] text-white/55 leading-relaxed line-clamp-6 max-w-[640px] mt-2.5 italic">
+              "{synopsis}"
+            </p>
+          )}
         </div>
 
         {/* Bottom: CTA buttons */}

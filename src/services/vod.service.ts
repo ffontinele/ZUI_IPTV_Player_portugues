@@ -189,3 +189,33 @@ export async function getVodStreams(
   if (!Array.isArray(raw)) return [];
   return raw.map(normalizeVodStream);
 }
+
+// ─── Detalhes completos de um filme (sinopse, elenco, etc.) ─────────────────
+// Usado sob demanda pelo hero quando a lista não traz sinopse.
+
+export type XtreamVodInfo = {
+  info?: {
+    plot?: string;
+    genre?: string;
+    director?: string;
+    cast?: string;
+    releasedate?: string;
+    duration?: string;
+    rating?: number;
+  };
+};
+
+export async function getVodInfo(
+  creds: XtreamCredentials,
+  vodId: number,
+  signal?: AbortSignal
+): Promise<XtreamVodInfo | null> {
+  try {
+    const url = buildApiUrl(creds, 'get_vod_info', { vod_id: String(vodId) });
+    const raw = await fetchJson<XtreamVodInfo>(url, signal);
+    return raw ?? null;
+  } catch {
+    return null;
+  }
+}
+
