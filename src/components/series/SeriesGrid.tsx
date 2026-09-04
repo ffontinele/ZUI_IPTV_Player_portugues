@@ -351,7 +351,7 @@ export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
   }, [baseSeriesList, localSearch]);
   const showLocalSearch = !['__resume__', '__watchlist__'].includes(activeCategory);
   const toggleWatchlist = useSeriesStore(s => s.toggleWatchlist);
-  const playSeries = useSeriesStore(s => s.playSeries);
+  const openSeriesDetails = useSeriesStore(s => s.openSeriesDetails);
 
   const gridRef = useRef<GridImperativeAPI>(null);
   const [containerSize, setContainerSize] = useState({ width: 1200, height: 600 });
@@ -416,9 +416,9 @@ export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
     if (!wasLongPressRef.current) {
       const idx = focusedRowRef.current * GRID_COLS + focusedColRef.current;
       const s = seriesList[idx];
-      if (s) playSeries(s.id);
+      if (s) void openSeriesDetails(s.id);
     }
-  }, [isVirtualized, seriesList, playSeries]);
+  }, [isVirtualized, seriesList, openSeriesDetails]);
 
   const { ref: focusRef, focusKey, focused } = useFocusable({
     focusKey: 'SERIES_GRID_VIRTUAL',
