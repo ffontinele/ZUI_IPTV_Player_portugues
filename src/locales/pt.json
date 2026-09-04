@@ -167,7 +167,10 @@
     "update_failed": "Falha: {{error}}",
     "deleted": "\"{{name}}\" excluída",
     "activated": "\"{{name}}\" ativada",
-    "deactivated": "\"{{name}}\" desativada"
+    "deactivated": "\"{{name}}\" desativada",
+    "edit": "Editar",
+    "edit_title": "Editar Lista",
+    "saving": "Salvando..."
   },
   "onboarding": {
     "hello": "Olá.",

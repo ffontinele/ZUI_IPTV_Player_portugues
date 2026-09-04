@@ -163,7 +163,10 @@
     "update_failed": "Échec de la mise à jour : {{error}}",
     "deleted": "\"{{name}}\" supprimée",
     "activated": "\"{{name}}\" activée",
-    "deactivated": "\"{{name}}\" désactivée"
+    "deactivated": "\"{{name}}\" désactivée",
+    "edit": "Modifier",
+    "edit_title": "Modifier la Liste",
+    "saving": "Enregistrement..."
   },
   "onboarding": {
     "hello": "Bonjour.",

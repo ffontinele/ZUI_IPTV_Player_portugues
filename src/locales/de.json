@@ -163,7 +163,10 @@
     "update_failed": "Aktualisierung fehlgeschlagen: {{error}}",
     "deleted": "\"{{name}}\" gelöscht",
     "activated": "\"{{name}}\" aktiviert",
-    "deactivated": "\"{{name}}\" deaktiviert"
+    "deactivated": "\"{{name}}\" deaktiviert",
+    "edit": "Bearbeiten",
+    "edit_title": "Liste Bearbeiten",
+    "saving": "Speichern..."
   },
   "onboarding": {
     "hello": "Hallo.",

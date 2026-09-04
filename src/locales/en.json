@@ -163,7 +163,10 @@
     "update_failed": "Update failed: {{error}}",
     "deleted": "\"{{name}}\" deleted",
     "activated": "\"{{name}}\" activated",
-    "deactivated": "\"{{name}}\" deactivated"
+    "deactivated": "\"{{name}}\" deactivated",
+    "edit": "Edit",
+    "edit_title": "Edit List",
+    "saving": "Saving..."
   },
   "onboarding": {
     "hello": "Hello.",

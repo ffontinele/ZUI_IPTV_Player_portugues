@@ -163,7 +163,10 @@
     "update_failed": "Güncelleme başarısız: {{error}}",
     "deleted": "\"{{name}}\" silindi",
     "activated": "\"{{name}}\" aktif edildi",
-    "deactivated": "\"{{name}}\" pasife alındı"
+    "deactivated": "\"{{name}}\" pasife alındı",
+    "edit": "Düzenle",
+    "edit_title": "Listeyi Düzenle",
+    "saving": "Kaydediliyor..."
   },
   "onboarding": {
     "hello": "Merhaba.",

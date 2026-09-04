@@ -9,6 +9,7 @@ import { useSourceStore } from '@/state/sourceStore';
 import { useUIStore } from '@/state/uiStore';
 import { useToast } from '@/components/ui/Toast';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
+import { EditSourceModal } from '@/components/settings/EditSourceModal';
 import { usePlaylistStore } from '@/state/playlistStore';
 import { useMoviesStore } from '@/state/moviesStore';
 import { useSeriesStore } from '@/state/seriesStore';
@@ -102,6 +103,7 @@ function SourceCard({
   onSync,
   onDelete,
   onToggleEnabled,
+  onEdit,
 }: {
   source: Source;
   isHero: boolean;
@@ -109,6 +111,7 @@ function SourceCard({
   onSync: () => void;
   onDelete: () => void;
   onToggleEnabled: () => void;
+  onEdit: () => void;
 }) {
   const { t } = useTranslation();
   const language = useSettingsStore(s => s.language);
@@ -236,6 +239,23 @@ function SourceCard({
           </svg>
           {t('playlists.delete')}
         </ActionButton>
+
+        {/* Espaçador para afastar o Editar */}
+        <div className="flex-1" />
+
+        <ActionButton
+          focusKey={`PL_EDIT_${source.id}`}
+          onPress={onEdit}
+          disabled={isSyncing}
+          accent
+        >
+          <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+          {t('playlists.edit')}
+        </ActionButton>
       </div>
     </div>
   );
@@ -332,6 +352,7 @@ export function PlaylistsScreen() {
 
   const [syncingId, setSyncingId]   = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Source | null>(null);
+  const [editTarget, setEditTarget] = useState<Source | null>(null);
 
   const { ref, focusKey, setFocus } = useFocusable({
     focusKey: 'PLAYLISTS',
@@ -452,6 +473,7 @@ export function PlaylistsScreen() {
                     onSync={() => void handleSync(source.id)}
                     onDelete={() => setDeleteTarget(source)}
                     onToggleEnabled={() => void handleToggleEnabled(source)}
+                    onEdit={() => setEditTarget(source)}
                   />
                 ))}
               </div>
@@ -469,6 +491,18 @@ export function PlaylistsScreen() {
           cancelLabel={t('playlists.confirm_cancel')}
           onConfirm={() => void handleDeleteConfirm()}
           onCancel={() => setDeleteTarget(null)}
+        />
+      )}
+
+      {/* Edit Source Modal */}
+      {editTarget && (
+        <EditSourceModal
+          source={editTarget}
+          onSuccess={() => {
+            setEditTarget(null);
+            showToast(t('playlists.updated', { count: editTarget.channelCount.toLocaleString(locale) }));
+          }}
+          onCancel={() => setEditTarget(null)}
         />
       )}
     </>

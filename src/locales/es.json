@@ -163,7 +163,10 @@
     "update_failed": "Error al actualizar: {{error}}",
     "deleted": "\"{{name}}\" eliminada",
     "activated": "\"{{name}}\" activada",
-    "deactivated": "\"{{name}}\" desactivada"
+    "deactivated": "\"{{name}}\" desactivada",
+    "edit": "Editar",
+    "edit_title": "Editar Lista",
+    "saving": "Guardando..."
   },
   "onboarding": {
     "hello": "Hola.",
