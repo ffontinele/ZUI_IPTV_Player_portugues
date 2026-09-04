@@ -733,7 +733,9 @@ function HomeFooter({ activeSource }: { activeSource: Source | null }) {
           {t('home.expires')}
         </span>
         <span className="font-serif text-[15px] font-light text-[#E8B567] tabular-nums">
-          {t('home.unlimited')}
+          {activeSource?.expDate && activeSource.expDate > 0
+            ? new Date(activeSource.expDate * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+            : t('home.unlimited')}
         </span>
       </div>
       <div className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-semibold">

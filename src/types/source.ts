@@ -15,6 +15,8 @@ export type Source = {
   config: M3UConfig | XtreamCredentials;
   enabled: boolean;        // Toggle ile kontrol; off ise kanalları listede görünmez
   syncedAt: number | null; // En son başarılı sync zamanı (Unix ms)
+  /** Data de expiração da conta Xtream (Unix seconds). null = ilimitado. */
+  expDate?: number | null;
   channelCount: number;    // Son sync'te alınan kanal sayısı
   lastError?: string;      // Son sync hatası (varsa)
   // D-035: Xtream'e özgü filtre alanları

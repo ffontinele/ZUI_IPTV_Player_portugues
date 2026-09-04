@@ -182,10 +182,12 @@ export const useSourceStore = create<SourceStore>((set, get) => ({
         channels = result.channels;
         channelCount = result.channels.length;
         categoryOrder = result.categoryNames.length > 0 ? result.categoryNames : undefined;
+        const expDate = result.expDate;
         // D-035: update bouquets from provider on re-sync (may change between syncs)
-        if (result.bouquets.length > 0) {
-          await get().updateSource(id, { bouquets: result.bouquets });
-        }
+        const expPatch: Partial<import("@/types/source").Source> = {};
+        if (result.bouquets.length > 0) expPatch.bouquets = result.bouquets;
+        expPatch.expDate = expDate ?? null;
+        await get().updateSource(id, expPatch);
         // Fire-and-forget IDB yazımı — UI anında güncellenir.
         channelCache.clearSourceChannels(source.id)
           .then(() => channelCache.putChannels(channels))

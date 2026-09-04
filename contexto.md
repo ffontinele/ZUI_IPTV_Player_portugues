@@ -18,3 +18,9 @@
   (get_vod_info) em segundo plano após 400ms e guarda num cache separado
 - Sem pulo de seleção: o cache não mexe na lista visível (não chama _recompute)
 - Se a lista já trouxer sinopse, ela é usada direto, sem busca extra (sem conflito)
+
+### 4. Data de expiração da lista no rodapé da tela inicial
+- O rodapé inferior esquerdo mostra: "LISTA ATIVA [nome] · EXPIRA [data]"
+- Se o servidor mandar `exp_date` → mostra a data formatada (ex: 15/03/2027)
+- Se não mandar (conta sem expiração) → mostra "Ilimitado"
+- A data é capturada durante o sync e salva na fonte

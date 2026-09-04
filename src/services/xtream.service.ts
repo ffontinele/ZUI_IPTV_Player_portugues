@@ -235,6 +235,8 @@ export type SyncXtreamResult = {
   bouquets: number[];
   /** Kategori isimleri server'ın döndürdüğü sırada (sidebar ordering için) */
   categoryNames: string[];
+  /** Data de expiração da conta (Unix seconds). null = ilimitado. */
+  expDate?: number | null;
 };
 
 /**
@@ -258,6 +260,9 @@ export async function syncXtreamSource(
   }
 
   const userBouquets = validation.userInfo?.user_info?.bouquets ?? [];
+  const ui = validation.userInfo?.user_info;
+  const expRaw = ui?.exp_date;
+  const expDate = expRaw && expRaw !== '0' && expRaw !== '' ? parseInt(String(expRaw), 10) : null;
 
   const [categories, streams] = await Promise.all([
     getXtreamCategories(creds, signal),
@@ -318,7 +323,7 @@ export async function syncXtreamSource(
     `[xtream] categories: ${categoryNames.length} (first 3: ${categoryNames.slice(0, 3).join(', ')})`
   );
 
-  return { channels, bouquets: userBouquets, categoryNames };
+  return { channels, bouquets: userBouquets, categoryNames, expDate };
 }
 
 export interface XtreamUserInfoResult {
