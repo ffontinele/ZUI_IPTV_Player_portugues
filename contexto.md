@@ -68,3 +68,11 @@ Próximo desafio conhecido (ainda não resolvido):
 - Agora: trilho branco brilhante + polegar preto, 12px de largura (igual à foto de referência do usuário)
 - Aplicado via CSS global em src/index.css (vale para todas as telas: filmes, séries, TV ao vivo, configurações, sidebars)
 - Regras antigas de scrollbar foram removidas antes de adicionar as novas
+
+### 11. Painel web — versão APROVADA pelo usuário (100% funcional)
+- Opção Xtream: campo para colar a URL completa + extração AUTOMÁTICA ao colar
+  (servidor, usuário e senha preenchidos sozinhos, com aviso verde "✔ Informações extraídas")
+- Campos manuais de servidor/usuário/senha também visíveis para ajuste fino
+- Opção M3U mantida para listas simples
+- A versão com botão "Extrair + confirmação" foi testada e REJEITADA
+- Esta versão (extração automática ao colar) foi aprovada como definitiva

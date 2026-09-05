@@ -16,16 +16,14 @@
   button{width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:var(--gold);color:#221;font-weight:700;font-size:15px;cursor:pointer}
   button.sec{background:#ffffff22;color:var(--txt)}
   button.del{background:#a33;color:#fff;width:auto;padding:6px 10px;margin:0}
-  button.extract{background:#2a5c2a;color:#fff;margin-top:8px}
   #msg{margin:10px 0;padding:10px;border-radius:8px;font-size:13px;display:none}
   .ok{background:#143a14;color:#9f9}
   .err{background:#3a1414;color:#f99}
-  .warn{background:#3a2a14;color:#fc9}
   .row{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff10;padding:8px 0}
   .small{font-size:12px;color:#ffffff77}
+  .auto-msg{display:none;margin:6px 0;padding:8px;background:#143a14;color:#9f9;border-radius:6px;font-size:12px;text-align:center}
+  .auto-msg.show{display:block}
   .help{font-size:11px;color:#ffffff55;margin-top:4px;line-height:1.4}
-  .divider{height:1px;background:#ffffff10;margin:16px 0}
-  .filled{border-color:#4a9c4a !important;background:#0a2a0a55 !important}
 </style>
 </head>
 <body>
@@ -42,7 +40,7 @@
   <label>Tipo</label>
   <select id="ptype" onchange="toggleType()">
     <option value="m3u">M3U (qualquer link de lista)</option>
-    <option value="xtream">Xtream Codes</option>
+    <option value="xtream">Xtream Codes (extrai automaticamente)</option>
   </select>
 
   <!-- Modo M3U: só URL -->
@@ -52,19 +50,16 @@
     <div class="help">Cole aqui qualquer URL de lista M3U.</div>
   </div>
 
-  <!-- Modo Xtream: 3 campos SEMPRE visíveis + opção de extrair -->
+  <!-- Modo Xtream: cola URL completa e o painel extrai -->
   <div id="xtreamFields" style="display:none">
-    <label>Servidor</label><input id="xhost" placeholder="http://servidor.com:8080">
-    <label>Usuário</label><input id="xuser" placeholder="seu usuario">
-    <label>Senha</label><input id="xpass" type="password" placeholder="sua senha">
-
-    <div class="divider"></div>
-    <div class="help" style="margin-bottom:8px">
-      💡 <strong>Opcional:</strong> Cole a URL completa do Xtream e clique em "Extrair" para preencher os campos acima automaticamente.
-    </div>
-    <label>Cole a URL completa aqui (opcional)</label>
+    <label>Cole aqui a URL completa do Xtream</label>
     <textarea id="xurl" placeholder="http://servidor.com:8080/get.php?username=joao&password=123&type=m3u_plus"></textarea>
-    <button class="extract" onclick="extractXtream()">🔍 Extrair servidor, usuário e senha</button>
+    <div class="help">O painel extrai automaticamente servidor, usuário e senha.</div>
+    <div id="autoMsg" class="auto-msg">✔ Informações extraídas automaticamente</div>
+
+    <label>Servidor</label><input id="xhost" placeholder="http://servidor.com:8080" oninput="onManualEdit()">
+    <label>Usuário</label><input id="xuser" oninput="onManualEdit()">
+    <label>Senha</label><input id="xpass" type="password" oninput="onManualEdit()">
   </div>
 
   <button onclick="send()">Enviar lista pra TV</button>
@@ -97,101 +92,68 @@ function H(){
   };
 }
 
-function M(t,type){
+function M(t,ok){
   var m=document.getElementById('msg');
   m.style.display='block';
-  m.className=type||'err';
+  m.className=ok?'ok':'err';
   m.textContent=t;
-  setTimeout(function(){m.style.display='none';},5000);
 }
 
 function toggleType(){
   var t=document.getElementById('ptype').value;
   document.getElementById('m3uFields').style.display=(t==='m3u')?'block':'none';
   document.getElementById('xtreamFields').style.display=(t==='xtream')?'block':'none';
+  document.getElementById('autoMsg').classList.remove('show');
 }
 
-// Extrai servidor/usuário/senha de uma URL Xtream (robusto)
-function parseXtream(raw){
-  if(!raw||!raw.trim())return null;
-  var text=raw.trim().split('\n')[0].trim();
-  
-  // Adiciona protocolo se faltar
-  if(!/^https?:\/\//i.test(text))text='http://'+text;
-  
+// Extrai servidor/usuário/senha de uma URL Xtream completa
+function extractXtream(raw){
+  if(!raw || !raw.trim()) return null;
+  var text=raw.trim().split('\n')[0].trim(); // pega só a 1ª linha
   try {
+    // Aceita URL sem protocolo (adiciona http://)
+    if(!/^https?:\/\//i.test(text)) text='http://'+text;
     var u=new URL(text);
     var params=u.searchParams;
-    
-    // Tenta vários nomes de parâmetros
-    var user=params.get('username')||params.get('user')||params.get('u')||params.get('user_id');
-    var pass=params.get('password')||params.get('pass')||params.get('p')||params.get('pwd');
-    var host=u.origin; // http://servidor:porta
-    
-    if(!user||!pass||!host||host==='null'){
-      return {error:'URL não contém username/password válidos'};
+    var user=params.get('username')||params.get('user')||params.get('u');
+    var pass=params.get('password')||params.get('pass')||params.get('p');
+    var host=u.origin; // http://host:porta
+    if(user && pass && host && host!=='null'){
+      return {host:host, user:user, pass:pass};
     }
-    
-    return {host:host, user:user, pass:pass};
-  } catch(e){
-    return {error:'URL inválida. Verifique se copiou o link completo.'};
-  }
+  } catch(e){}
+  return null;
 }
 
-// Botão Extrair: pede confirmação e preenche os 3 campos
-function extractXtream(){
-  var raw=document.getElementById('xurl').value;
-  if(!raw.trim()){
-    M('Cole a URL completa primeiro.','err');
-    return;
+// Monitora o campo de URL Xtream e preenche automaticamente
+document.getElementById('xurl').addEventListener('input', function(){
+  var extracted=extractXtream(this.value);
+  if(extracted){
+    document.getElementById('xhost').value=extracted.host;
+    document.getElementById('xuser').value=extracted.user;
+    document.getElementById('xpass').value=extracted.pass;
+    document.getElementById('autoMsg').classList.add('show');
+  } else {
+    document.getElementById('autoMsg').classList.remove('show');
   }
-  
-  var result=parseXtream(raw);
-  
-  if(result.error){
-    M('❌ '+result.error,'err');
-    return;
-  }
-  
-  // Confirmação
-  var msg='Foram encontrados:\n\n';
-  msg+='Servidor: '+result.host+'\n';
-  msg+='Usuário: '+result.user+'\n';
-  msg+='Senha: '+result.pass+'\n\n';
-  msg+='Preencher esses dados nos campos acima?';
-  
-  if(!confirm(msg)){
-    M('Extração cancelada.','warn');
-    return;
-  }
-  
-  // Preenche e destaca os campos
-  var hostEl=document.getElementById('xhost');
-  var userEl=document.getElementById('xuser');
-  var passEl=document.getElementById('xpass');
-  
-  hostEl.value=result.host;
-  userEl.value=result.user;
-  passEl.value=result.pass;
-  
-  hostEl.classList.add('filled');
-  userEl.classList.add('filled');
-  passEl.classList.add('filled');
-  
-  M('✔ Campos preenchidos automaticamente! Confira e envie.','ok');
+});
+
+// Se o usuário editar manualmente, esconde o aviso automático
+function onManualEdit(){
+  document.getElementById('autoMsg').classList.remove('show');
 }
 
 function verify(){
   fetch(BASE+'/rest/v1/devices?select=device_id,device_key',{headers:H()})
     .then(function(r){return r.json();})
     .then(function(d){
-      if(d&&d.length>0){
-        M('TV encontrada: '+d[0].device_id+' ✔','ok');
+      if(d && d.length>0){
+        M('TV encontrada: '+d[0].device_id+' ✔',true);
         load();
       } else {
-        M('TV não encontrada. Confira ID/chave e se o app está aberto na TV.','err');
+        M('TV não encontrada. Confira ID/chave e se o app está aberto na TV.',false);
       }
-    }).catch(function(e){M('Erro: '+e,'err');});
+    }).catch(function(e){M('Erro: '+e,false);});
 }
 
 function send(){
@@ -205,15 +167,15 @@ function send(){
 
   if(type==='m3u'){
     var url=document.getElementById('purl').value.trim();
-    if(!url){M('Cole a URL da lista M3U.','err');return;}
+    if(!url){M('Cole a URL da lista M3U.',false);return;}
     body.playlist_url=url;
   } else {
-    // Xtream: usa os 3 campos (preenchidos por extração ou manualmente)
+    // Xtream: usa os 3 campos (preenchidos automaticamente ou manualmente)
     var host=document.getElementById('xhost').value.trim();
     var user=document.getElementById('xuser').value.trim();
     var pass=document.getElementById('xpass').value.trim();
     if(!host||!user||!pass){
-      M('Preencha servidor, usuário e senha — ou cole a URL e clique em "Extrair".','err');
+      M('Cole a URL completa do Xtream ou preencha servidor/usuário/senha.',false);
       return;
     }
     body.playlist_url=host;
@@ -226,8 +188,8 @@ function send(){
     headers:H(),
     body:JSON.stringify(body)
   }).then(function(r){
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    M('Lista "'+name+'" enviada! A TV carrega em segundos ✔','ok');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    M('Lista "'+name+'" enviada! A TV carrega em segundos ✔',true);
     // Limpa os campos
     document.getElementById('pname').value='';
     document.getElementById('purl').value='';
@@ -235,11 +197,9 @@ function send(){
     document.getElementById('xhost').value='';
     document.getElementById('xuser').value='';
     document.getElementById('xpass').value='';
-    ['xhost','xuser','xpass'].forEach(function(id){
-      document.getElementById(id).classList.remove('filled');
-    });
+    document.getElementById('autoMsg').classList.remove('show');
     load();
-  }).catch(function(e){M('Erro ao enviar: '+e,'err');});
+  }).catch(function(e){M('Erro ao enviar: '+e,false);});
 }
 
 function load(){
@@ -265,7 +225,7 @@ function load(){
 
 function del(id){
   fetch(BASE+'/rest/v1/playlists?id=eq.'+id,{method:'DELETE',headers:H()})
-    .then(function(){M('Lista removida.','ok');load();});
+    .then(function(){M('Lista removida.',true);load();});
 }
 </script>
 </body>
