@@ -17,7 +17,7 @@ function BackHomeButton() {
   const navigate = useUIStore(s => s.navigate);
 
   const { ref, focused } = useFocusable({
-    focusKey: 'MOVIES_BACK_HOME',
+    focusKey: 'MOVIES_CATEGORY_LIST',
     onEnterPress: () => navigate('home'),
   });
 

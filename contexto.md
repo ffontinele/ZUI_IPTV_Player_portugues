@@ -24,3 +24,10 @@
 - Se o servidor mandar `exp_date` → mostra a data formatada (ex: 15/03/2027)
 - Se não mandar (conta sem expiração) → mostra "Ilimitado"
 - A data é capturada durante o sync e salva na fonte
+
+### 5. Correção de foco nas telas de Filmes e Séries
+- Ao abrir Filmes/Séries, foco cai direto no grid de cards (não mais no botão Home)
+- Ao voltar do player, foco cai no grid (não mais no botão Home)
+- Removido o BackHomeButton do sidebar (causava conflito de foco e enviava pra Home ao clicar)
+- Fluxo esperado: grid → seta ← → sidebar de categorias → seta → → grid
+- BackHomeButton era inútil porque o controle já tem botão Voltar dedicado (via RemoteRouter)

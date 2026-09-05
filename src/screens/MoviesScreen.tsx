@@ -52,7 +52,7 @@ export function MoviesScreen() {
   // Small delay (1 frame) lets the sidebar/grid DOM mount before setFocus.
   useEffect(() => {
     if (status === 'ready') {
-      const t = setTimeout(() => setFocus('MOVIES_BACK_HOME'), 60);
+      const t = setTimeout(() => setFocus('MOVIES_GRID_VIRTUAL'), 60);
       return () => clearTimeout(t);
     }
   }, [status, setFocus]);

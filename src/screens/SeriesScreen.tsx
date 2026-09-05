@@ -49,7 +49,7 @@ export function SeriesScreen() {
   // Set D-pad focus when data becomes ready
   useEffect(() => {
     if (status === 'ready') {
-      const t = setTimeout(() => setFocus('SERIES_BACK_HOME'), 60);
+      const t = setTimeout(() => setFocus('SERIES_GRID_VIRTUAL'), 60);
       return () => clearTimeout(t);
     }
   }, [status, setFocus]);
