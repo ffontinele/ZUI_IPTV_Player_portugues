@@ -108,6 +108,8 @@ type SeriesStore = {
 
   // Episode browser modal
   detailsSeriesId: string | null;
+  reopenSeriesId: string | null;
+  reopenSeason: number | null;
   detailsInfo: XtreamSeriesInfoResponse | null;
   detailsStatus: 'idle' | 'loading' | 'error' | 'ready';
   detailsError: string | null;
@@ -158,6 +160,8 @@ export const useSeriesStore = create<SeriesStore>()(
       status: 'idle',
       error: null,
       detailsSeriesId: null,
+      reopenSeriesId: null,
+      reopenSeason: null,
       detailsInfo: null,
       detailsStatus: 'idle',
       detailsError: null,
@@ -368,7 +372,9 @@ export const useSeriesStore = create<SeriesStore>()(
           const info = await getSeriesInfo(creds, seriesId);
           const seasonNums = Object.keys(info.episodes).map(Number).sort((a, b) => a - b);
           const firstSeason = seasonNums[0] ?? 1;
-          set({ detailsInfo: info, detailsStatus: 'ready', detailsActiveSeason: firstSeason });
+    const rs = get().reopenSeason;
+    const keepSeason = rs != null && seasonNums.includes(rs) ? rs : firstSeason;
+          set({ detailsInfo: info, detailsStatus: 'ready', detailsActiveSeason: keepSeason, reopenSeason: null });
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'Bölüm listesi yüklenemedi';
           set({ detailsStatus: 'error', detailsError: msg });
@@ -384,6 +390,7 @@ export const useSeriesStore = create<SeriesStore>()(
       },
 
       playEpisode: (episode, seriesTitle, seasonKey) => {
+        if (get().detailsSeriesId) set({ reopenSeriesId: get().detailsSeriesId, reopenSeason: get().detailsActiveSeason ?? null });
         const creds = getXtreamCreds();
         if (!creds) return;
 

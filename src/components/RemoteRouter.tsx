@@ -24,6 +24,19 @@ export function RemoteRouter() {
           closeModal();
           return;
         }
+        // No player, BACK sempre sai do player primeiro.
+        // O modal de episódios (se estava aberto) reaparece na tela de séries;
+        // o próximo BACK fecha o modal; o seguinte volta pra Home.
+        if (currentScreen === 'player') {
+          const reopen = useSeriesStore.getState().reopenSeriesId;
+          navigate(useUIStore.getState().lastMainScreen);
+          if (reopen) {
+            useSeriesStore.setState({ reopenSeriesId: null });
+            void useSeriesStore.getState().openSeriesDetails(reopen);
+          }
+          return;
+        }
+
         // Respeitar modais de detalhes (filme/serie) antes de navegar
         const seriesDetails = useSeriesStore.getState().detailsSeriesId;
         const movieDetails = useMoviesStore.getState().detailsMovieId;
@@ -34,9 +47,6 @@ export function RemoteRouter() {
         }
 
         switch (currentScreen) {
-          case 'player':
-            navigate(useUIStore.getState().lastMainScreen);
-            break;
           case 'channelList':
           case 'epg':
           case 'settings':

@@ -84,6 +84,17 @@ export function MoviesScreen() {
     setFocusedMovieId(saved);
   }, [activeCategory, visibleMovies]);
 
+  // Modal fechado → devolve o foco para o grid (evita direcional morto)
+  const prevDetailsRef = useRef(detailsMovieId);
+  useEffect(() => {
+    const wasOpen = prevDetailsRef.current !== null;
+    prevDetailsRef.current = detailsMovieId;
+    if (wasOpen && detailsMovieId === null) {
+      const timer = setTimeout(() => setFocus('MOVIES_GRID_VIRTUAL'), 60);
+      return () => clearTimeout(timer);
+    }
+  }, [detailsMovieId, setFocus]);
+
   const focusedMovie =
     visibleMovies.find(m => m.id === focusedMovieId) ?? visibleMovies[0] ?? null;
 

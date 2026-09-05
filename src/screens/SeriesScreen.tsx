@@ -81,6 +81,17 @@ export function SeriesScreen() {
     setFocusedSeriesId(saved);
   }, [activeCategory, visibleSeries]);
 
+  // Modal fechado → devolve o foco para o grid (evita direcional morto)
+  const prevDetailsRef = useRef(detailsSeriesId);
+  useEffect(() => {
+    const wasOpen = prevDetailsRef.current !== null;
+    prevDetailsRef.current = detailsSeriesId;
+    if (wasOpen && detailsSeriesId === null) {
+      const timer = setTimeout(() => setFocus('SERIES_GRID_VIRTUAL'), 60);
+      return () => clearTimeout(timer);
+    }
+  }, [detailsSeriesId, setFocus]);
+
   const focusedSeries =
     visibleSeries.find(s => s.id === focusedSeriesId) ?? visibleSeries[0] ?? null;
 
