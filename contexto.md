@@ -46,3 +46,19 @@
   lastMoviesGridFocus / lastSeriesGridFocus (categoria + id do card)
 - Se o usuário trocar de categoria dentro da tela, o foco vai para o primeiro card da nova categoria (comportamento normal)
 - Se voltar do player na mesma categoria, o foco volta exatamente para o card que abriu o vídeo
+
+### 9. MARCO: Versão estável confirmada (commit 97fced8)
+Esta é a versão que está funcionando 100% e serve como ponto de partida seguro:
+
+✅ Sair do player → volta pro MESMO card focado (não o primeiro)
+✅ Modal de episódios → reabre na MESMA temporada ao sair do player
+✅ Foco volta pro grid quando o modal fecha (direcional funcionando)
+✅ Seta ← no primeiro card do grid → vai pra categoria ativa
+✅ Data de expiração real no rodapé
+✅ Sinopse nos filmes (sem pulo de seleção)
+✅ Botão Editar nas listas
+✅ BackHomeButton removido (sem mais enviar pra Home ao clicar)
+
+Próximo desafio conhecido (ainda não resolvido):
+- Seta ← no sidebar escapa pro TopBar (zona de foco invisível)
+- Tentativas de bloqueio não funcionaram; precisa de abordagem diferente
