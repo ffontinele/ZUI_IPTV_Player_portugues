@@ -11,7 +11,8 @@
   h1{font-size:20px;color:var(--gold);margin:8px 0}
   .card{background:var(--card);border:1px solid #ffffff14;border-radius:14px;padding:14px;margin:12px 0}
   label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#ffffff88;display:block;margin:8px 0 4px}
-  input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #ffffff22;background:#00000055;color:var(--txt);font-size:14px}
+  input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #ffffff22;background:#00000055;color:var(--txt);font-size:14px}
+  textarea{font-family:ui-monospace,monospace;font-size:12px;min-height:60px;resize:vertical}
   button{width:100%;margin-top:12px;padding:12px;border:none;border-radius:10px;background:var(--gold);color:#221;font-weight:700;font-size:15px;cursor:pointer}
   button.sec{background:#ffffff22;color:var(--txt)}
   button.del{background:#a33;color:#fff;width:auto;padding:6px 10px;margin:0}
@@ -20,6 +21,9 @@
   .err{background:#3a1414;color:#f99}
   .row{display:flex;gap:8px;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff10;padding:8px 0}
   .small{font-size:12px;color:#ffffff77}
+  .auto-msg{display:none;margin:6px 0;padding:8px;background:#143a14;color:#9f9;border-radius:6px;font-size:12px;text-align:center}
+  .auto-msg.show{display:block}
+  .help{font-size:11px;color:#ffffff55;margin-top:4px;line-height:1.4}
 </style>
 </head>
 <body>
@@ -34,12 +38,30 @@
 <div class="card">
   <label>Nome da lista</label><input id="pname" placeholder="Minha Lista">
   <label>Tipo</label>
-  <select id="ptype" onchange="toggleX()"><option value="m3u">M3U</option><option value="xtream">Xtream</option></select>
-  <label>URL (M3U) ou Host (Xtream)</label><input id="purl" placeholder="http://...">
-  <div id="xfields" style="display:none">
-    <label>Usuário Xtream</label><input id="xuser">
-    <label>Senha Xtream</label><input id="xpass" type="password">
+  <select id="ptype" onchange="toggleType()">
+    <option value="m3u">M3U (qualquer link de lista)</option>
+    <option value="xtream">Xtream Codes (extrai automaticamente)</option>
+  </select>
+
+  <!-- Modo M3U: só URL -->
+  <div id="m3uFields">
+    <label>URL da lista M3U</label>
+    <input id="purl" placeholder="http://servidor/playlist.m3u">
+    <div class="help">Cole aqui qualquer URL de lista M3U.</div>
   </div>
+
+  <!-- Modo Xtream: cola URL completa e o painel extrai -->
+  <div id="xtreamFields" style="display:none">
+    <label>Cole aqui a URL completa do Xtream</label>
+    <textarea id="xurl" placeholder="http://servidor.com:8080/get.php?username=joao&password=123&type=m3u_plus"></textarea>
+    <div class="help">O painel extrai automaticamente servidor, usuário e senha.</div>
+    <div id="autoMsg" class="auto-msg">✔ Informações extraídas automaticamente</div>
+
+    <label>Servidor</label><input id="xhost" placeholder="http://servidor.com:8080" oninput="onManualEdit()">
+    <label>Usuário</label><input id="xuser" oninput="onManualEdit()">
+    <label>Senha</label><input id="xpass" type="password" oninput="onManualEdit()">
+  </div>
+
   <button onclick="send()">Enviar lista pra TV</button>
 </div>
 
@@ -57,35 +79,154 @@ var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6I
 var q=new URLSearchParams(location.search);
 if(q.get('id'))document.getElementById('tid').value=q.get('id');
 if(q.get('key'))document.getElementById('tkey').value=q.get('key');
-function H(){var id=document.getElementById('tid').value.trim(),k=document.getElementById('tkey').value.trim();
- return{'apikey':ANON,'Authorization':'Bearer '+ANON,'Content-Type':'application/json','x-zui-device-id':id,'x-zui-device-key':k};}
-function M(t,ok){var m=document.getElementById('msg');m.style.display='block';m.className=ok?'ok':'err';m.textContent=t;}
-function toggleX(){document.getElementById('xfields').style.display=(document.getElementById('ptype').value=='xtream')?'block':'none';}
-function verify(){fetch(BASE+'/rest/v1/devices?select=device_id,device_key',{headers:H()})
- .then(function(r){return r.json();}).then(function(d){
-   if(d&&d.length>0){M('TV encontrada: '+d[0].device_id+' ✔',true);load();}
-   else M('TV não encontrada. Confira ID/chave e se o app está aberto na TV.',false);
- }).catch(function(e){M('Erro: '+e,false);});}
-function send(){var t=document.getElementById('ptype').value;
- var body={device_id:document.getElementById('tid').value.trim(),
-   playlist_url:document.getElementById('purl').value.trim(),
-   playlist_name:document.getElementById('pname').value.trim()||'Minha Lista',
-   source_type:t};
- if(t=='xtream'){body.xtream_username=document.getElementById('xuser').value.trim();
-   body.xtream_password=document.getElementById('xpass').value.trim();}
- fetch(BASE+'/rest/v1/playlists',{method:'POST',headers:H(),body:JSON.stringify(body)})
- .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);M('Lista enviada! A TV carrega em segundos ✔',true);load();})
- .catch(function(e){M('Erro ao enviar: '+e,false);});}
-function load(){fetch(BASE+'/rest/v1/playlists?select=id,playlist_name,source_type,loaded&order=sent_at.desc',{headers:H()})
- .then(function(r){return r.json();}).then(function(d){var el=document.getElementById('list');el.innerHTML='';
-   if(!d||d.length==0){el.innerHTML='<div class="small">Nenhuma lista enviada.</div>';return;}
-   d.forEach(function(p){var div=document.createElement('div');div.className='row';
-     div.innerHTML='<span>'+p.playlist_name+' <span class="small">('+p.source_type+')</span></span>';
-     var b=document.createElement('button');b.className='del';b.textContent='✕';b.onclick=function(){del(p.id);};
-     div.appendChild(b);el.appendChild(div);});
- }).catch(function(e){});}
-function del(id){fetch(BASE+'/rest/v1/playlists?id=eq.'+id,{method:'DELETE',headers:H()})
- .then(function(){M('Lista removida.',true);load();});}
+
+function H(){
+  var id=document.getElementById('tid').value.trim(),
+      k=document.getElementById('tkey').value.trim();
+  return{
+    'apikey':ANON,
+    'Authorization':'Bearer '+ANON,
+    'Content-Type':'application/json',
+    'x-zui-device-id':id,
+    'x-zui-device-key':k
+  };
+}
+
+function M(t,ok){
+  var m=document.getElementById('msg');
+  m.style.display='block';
+  m.className=ok?'ok':'err';
+  m.textContent=t;
+}
+
+function toggleType(){
+  var t=document.getElementById('ptype').value;
+  document.getElementById('m3uFields').style.display=(t==='m3u')?'block':'none';
+  document.getElementById('xtreamFields').style.display=(t==='xtream')?'block':'none';
+  document.getElementById('autoMsg').classList.remove('show');
+}
+
+// Extrai servidor/usuário/senha de uma URL Xtream completa
+function extractXtream(raw){
+  if(!raw || !raw.trim()) return null;
+  var text=raw.trim().split('\n')[0].trim(); // pega só a 1ª linha
+  try {
+    // Aceita URL sem protocolo (adiciona http://)
+    if(!/^https?:\/\//i.test(text)) text='http://'+text;
+    var u=new URL(text);
+    var params=u.searchParams;
+    var user=params.get('username')||params.get('user')||params.get('u');
+    var pass=params.get('password')||params.get('pass')||params.get('p');
+    var host=u.origin; // http://host:porta
+    if(user && pass && host && host!=='null'){
+      return {host:host, user:user, pass:pass};
+    }
+  } catch(e){}
+  return null;
+}
+
+// Monitora o campo de URL Xtream e preenche automaticamente
+document.getElementById('xurl').addEventListener('input', function(){
+  var extracted=extractXtream(this.value);
+  if(extracted){
+    document.getElementById('xhost').value=extracted.host;
+    document.getElementById('xuser').value=extracted.user;
+    document.getElementById('xpass').value=extracted.pass;
+    document.getElementById('autoMsg').classList.add('show');
+  } else {
+    document.getElementById('autoMsg').classList.remove('show');
+  }
+});
+
+// Se o usuário editar manualmente, esconde o aviso automático
+function onManualEdit(){
+  document.getElementById('autoMsg').classList.remove('show');
+}
+
+function verify(){
+  fetch(BASE+'/rest/v1/devices?select=device_id,device_key',{headers:H()})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d && d.length>0){
+        M('TV encontrada: '+d[0].device_id+' ✔',true);
+        load();
+      } else {
+        M('TV não encontrada. Confira ID/chave e se o app está aberto na TV.',false);
+      }
+    }).catch(function(e){M('Erro: '+e,false);});
+}
+
+function send(){
+  var type=document.getElementById('ptype').value;
+  var name=document.getElementById('pname').value.trim()||'Minha Lista';
+  var body={
+    device_id:document.getElementById('tid').value.trim(),
+    playlist_name:name,
+    source_type:type
+  };
+
+  if(type==='m3u'){
+    var url=document.getElementById('purl').value.trim();
+    if(!url){M('Cole a URL da lista M3U.',false);return;}
+    body.playlist_url=url;
+  } else {
+    // Xtream: usa os 3 campos (preenchidos automaticamente ou manualmente)
+    var host=document.getElementById('xhost').value.trim();
+    var user=document.getElementById('xuser').value.trim();
+    var pass=document.getElementById('xpass').value.trim();
+    if(!host||!user||!pass){
+      M('Cole a URL completa do Xtream ou preencha servidor/usuário/senha.',false);
+      return;
+    }
+    body.playlist_url=host;
+    body.xtream_username=user;
+    body.xtream_password=pass;
+  }
+
+  fetch(BASE+'/rest/v1/playlists',{
+    method:'POST',
+    headers:H(),
+    body:JSON.stringify(body)
+  }).then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    M('Lista "'+name+'" enviada! A TV carrega em segundos ✔',true);
+    // Limpa os campos
+    document.getElementById('pname').value='';
+    document.getElementById('purl').value='';
+    document.getElementById('xurl').value='';
+    document.getElementById('xhost').value='';
+    document.getElementById('xuser').value='';
+    document.getElementById('xpass').value='';
+    document.getElementById('autoMsg').classList.remove('show');
+    load();
+  }).catch(function(e){M('Erro ao enviar: '+e,false);});
+}
+
+function load(){
+  fetch(BASE+'/rest/v1/playlists?select=id,playlist_name,source_type,loaded&order=sent_at.desc',{headers:H()})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var el=document.getElementById('list');
+      el.innerHTML='';
+      if(!d||d.length==0){el.innerHTML='<div class="small">Nenhuma lista enviada.</div>';return;}
+      d.forEach(function(p){
+        var div=document.createElement('div');
+        div.className='row';
+        div.innerHTML='<span>'+p.playlist_name+' <span class="small">('+p.source_type+')</span></span>';
+        var b=document.createElement('button');
+        b.className='del';
+        b.textContent='✕';
+        b.onclick=function(){del(p.id);};
+        div.appendChild(b);
+        el.appendChild(div);
+      });
+    }).catch(function(e){});
+}
+
+function del(id){
+  fetch(BASE+'/rest/v1/playlists?id=eq.'+id,{method:'DELETE',headers:H()})
+    .then(function(){M('Lista removida.',true);load();});
+}
 </script>
 </body>
 </html>
