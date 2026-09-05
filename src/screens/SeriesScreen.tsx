@@ -112,6 +112,7 @@ export function SeriesScreen() {
               <SeriesGrid
                 focusedSeriesId={focusedSeriesId}
                 onFocusSeries={setFocusedSeriesId}
+                onEscapeToLeft={() => setFocus(`series-cat-${activeCategory}`)}
               />
             </main>
           </div>

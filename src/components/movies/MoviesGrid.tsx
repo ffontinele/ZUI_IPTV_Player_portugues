@@ -30,6 +30,7 @@ const SORT_KEYS: Record<MovieSort, string> = {
 interface Props {
   focusedMovieId: string | null;
   onFocusMovie: (id: string | null) => void;
+  onEscapeToLeft?: () => void;
 }
 
 // ─── Virtual grid cell (presentational — no norigin hooks) ──────────────────
@@ -289,7 +290,7 @@ function SectionHeader() {
 
 // ─── Main grid ────────────────────────────────────────────────────────────────
 
-export function MoviesGrid({ focusedMovieId, onFocusMovie }: Props) {
+export function MoviesGrid({ focusedMovieId, onFocusMovie, onEscapeToLeft }: Props) {
   const { t } = useTranslation();
   const baseMovies = useMoviesStore(s => s.visibleMovies);
   const activeCategory = useMoviesStore(s => s.activeCategory);
@@ -339,11 +340,17 @@ export function MoviesGrid({ focusedMovieId, onFocusMovie }: Props) {
     switch (direction) {
       case 'up':    return moveTo(focusedRowRef.current - 1, focusedColRef.current);
       case 'down':  return moveTo(focusedRowRef.current + 1, focusedColRef.current);
-      case 'left':  return moveTo(focusedRowRef.current, focusedColRef.current - 1);
+      case 'left': {
+      if (focusedColRef.current === 0) {
+        onEscapeToLeft?.();
+        return false;
+      }
+      return moveTo(focusedRowRef.current, focusedColRef.current - 1);
+    }
       case 'right': return moveTo(focusedRowRef.current, focusedColRef.current + 1);
       default:      return true;
     }
-  }, [isVirtualized, movies, onFocusMovie]);
+  }, [isVirtualized, movies, onFocusMovie, onEscapeToLeft]);
 
   // Long-press fav / short-press play
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

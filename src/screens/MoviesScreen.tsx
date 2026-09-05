@@ -115,6 +115,7 @@ export function MoviesScreen() {
               <MoviesGrid
                 focusedMovieId={focusedMovieId}
                 onFocusMovie={setFocusedMovieId}
+                onEscapeToLeft={() => setFocus(`movie-cat-${activeCategory}`)}
               />
             </main>
           </div>

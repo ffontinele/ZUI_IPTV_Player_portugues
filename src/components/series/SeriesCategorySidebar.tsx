@@ -6,61 +6,8 @@ import { useRef } from 'react';
 import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import { useTranslation } from 'react-i18next';
 import { useSeriesStore } from '@/state/seriesStore';
-import { useUIStore } from '@/state/uiStore';
 import { useFocusableScroll } from '@/hooks/useFocusableScroll';
 import type { SeriesCategory } from '@/types/series';
-
-// ─── Back-to-home pill ──────────────────────────────────────────────────
-
-function BackHomeButton() {
-  const { t }    = useTranslation();
-  const navigate = useUIStore(s => s.navigate);
-
-  const { ref, focused } = useFocusable({
-    focusKey: 'SERIES_CATEGORY_LIST',
-    onEnterPress: () => navigate('home'),
-  });
-
-  return (
-    <button
-      ref={ref as React.RefObject<HTMLButtonElement>}
-      onClick={() => navigate('home')}
-      aria-label={t('sidebar.home')}
-      className={[
-        'group flex items-center gap-3 w-full px-3 h-12 rounded-full transition-all shrink-0',
-        focused
-          ? 'border border-[#E8B567]/55 bg-[#E8B567]/[0.08] text-[#E8B567] shadow-[0_0_24px_-8px_#E8B567] scale-[1.02]'
-          : 'border border-white/[0.08] bg-white/[0.02] text-white/65 hover:text-white hover:border-white/20',
-      ].join(' ')}
-    >
-      <span
-        className={[
-          'grid place-items-center w-7 h-7 rounded-full border',
-          focused ? 'border-[#E8B567]/55' : 'border-white/15',
-        ].join(' ')}
-      >
-        <svg
-          viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
-          className="w-3.5 h-3.5"
-        >
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </span>
-      <span className="font-serif italic text-[15px] font-light tracking-wide flex-1 text-left">
-        {t('sidebar.home')}
-      </span>
-      <span
-        className={[
-          'text-[10px] uppercase tracking-[0.3em] font-semibold',
-          focused ? 'text-[#E8B567]/70' : 'text-white/35',
-        ].join(' ')}
-      >
-        OK
-      </span>
-    </button>
-  );
-}
 
 // ─── Category search ────────────────────────────────────────────────────
 
@@ -213,7 +160,6 @@ export function SeriesCategorySidebar() {
         ref={ref as React.RefObject<HTMLElement>}
         className="relative flex flex-col gap-3 overflow-hidden"
       >
-        <BackHomeButton />
         <CategorySearch />
 
         <div className="flex-1 min-h-0 overflow-y-auto pr-1">

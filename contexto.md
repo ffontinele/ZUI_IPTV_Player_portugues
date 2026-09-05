@@ -31,3 +31,10 @@
 - Removido o BackHomeButton do sidebar (causava conflito de foco e enviava pra Home ao clicar)
 - Fluxo esperado: grid → seta ← → sidebar de categorias → seta → → grid
 - BackHomeButton era inútil porque o controle já tem botão Voltar dedicado (via RemoteRouter)
+
+### 6. Correção definitiva do foco nas telas de Filmes e Séries
+- Removido o BackHomeButton do sidebar de filmes e séries (era renderizado no topo do sidebar e capturava o foco ao sair do grid)
+- Ao apertar seta ← no primeiro card do grid, o foco agora vai direto para a categoria ativa (ex: movie-cat-77) em vez de escapar para o sidebar
+- Implementado via callback onEscapeToLeft passada do MoviesScreen/SeriesScreen para os Grids
+- Fluxo corrigido: grid → seta ← → sidebar de categorias → seta → → grid (sem mais enviar para Home)
+- Botão Voltar do controle (via RemoteRouter) continua funcionando para sair da tela e voltar para Home

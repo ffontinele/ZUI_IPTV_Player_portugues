@@ -31,6 +31,7 @@ const SORT_KEYS: Record<SeriesSort, string> = {
 interface Props {
   focusedSeriesId: string | null;
   onFocusSeries: (id: string | null) => void;
+  onEscapeToLeft?: () => void;
 }
 
 // ─── Virtual cell inner ─────────────────────────────────────────────────
@@ -336,7 +337,7 @@ function SectionHeader() {
 
 // ─── Main grid ───────────────────────────────────────────────────────────
 
-export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
+export function SeriesGrid({ focusedSeriesId, onFocusSeries, onEscapeToLeft }: Props) {
   const { t } = useTranslation();
   const baseSeriesList = useSeriesStore(s => s.visibleSeries);
   const activeCategory = useSeriesStore(s => s.activeCategory);
@@ -386,11 +387,17 @@ export function SeriesGrid({ focusedSeriesId, onFocusSeries }: Props) {
     switch (direction) {
       case 'up':    return moveTo(focusedRowRef.current - 1, focusedColRef.current);
       case 'down':  return moveTo(focusedRowRef.current + 1, focusedColRef.current);
-      case 'left':  return moveTo(focusedRowRef.current, focusedColRef.current - 1);
+      case 'left': {
+      if (focusedColRef.current === 0) {
+        onEscapeToLeft?.();
+        return false;
+      }
+      return moveTo(focusedRowRef.current, focusedColRef.current - 1);
+    }
       case 'right': return moveTo(focusedRowRef.current, focusedColRef.current + 1);
       default:      return true;
     }
-  }, [isVirtualized, seriesList, onFocusSeries]);
+  }, [isVirtualized, seriesList, onFocusSeries, onEscapeToLeft]);
 
   // Long-press = toggle watchlist; short-press = play series
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
