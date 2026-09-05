@@ -2,7 +2,7 @@
 // Global TopBar is rendered by App.tsx (same as channelList/epg/settings).
 // Layout: 22% sidebar + 1fr main (hero + grid).
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import { useTranslation } from 'react-i18next';
 import { useMoviesStore } from '@/state/moviesStore';
@@ -10,6 +10,8 @@ import { MovieCategorySidebar } from '@/components/movies/MovieCategorySidebar';
 import { MoviesHero } from '@/components/movies/MoviesHero';
 import { MoviesGrid } from '@/components/movies/MoviesGrid';
 import { MovieDetailsModal } from '@/components/movies/MovieDetailsModal';
+
+let lastMoviesGridFocus: { categoryId: string; id: string | null } = { categoryId: '', id: null };
 
 export function MoviesScreen() {
   const visibleMovies = useMoviesStore(s => s.visibleMovies);
@@ -57,13 +59,38 @@ export function MoviesScreen() {
     }
   }, [status, setFocus]);
 
-  // When category changes, reset focused movie to the first visible one
+  const prevCategoryRef = useRef(activeCategory);
+
+  // Categoria mudou dentro da tela → primeiro card.
+  // Voltou do player na mesma categoria → restaura o último card focado.
   useEffect(() => {
-    setFocusedMovieId(visibleMovies[0]?.id ?? null);
+    const categoryChanged = prevCategoryRef.current !== activeCategory;
+    prevCategoryRef.current = activeCategory;
+
+    if (categoryChanged) {
+      const first = visibleMovies[0]?.id ?? null;
+      setFocusedMovieId(first);
+      lastMoviesGridFocus = { categoryId: activeCategory, id: first };
+      return;
+    }
+
+    const saved =
+      lastMoviesGridFocus.categoryId === activeCategory &&
+      lastMoviesGridFocus.id &&
+      visibleMovies.some(m => m.id === lastMoviesGridFocus.id)
+        ? lastMoviesGridFocus.id
+        : visibleMovies[0]?.id ?? null;
+
+    setFocusedMovieId(saved);
   }, [activeCategory, visibleMovies]);
 
   const focusedMovie =
     visibleMovies.find(m => m.id === focusedMovieId) ?? visibleMovies[0] ?? null;
+
+  const handleFocusMovie = (id: string | null) => {
+    setFocusedMovieId(id);
+    lastMoviesGridFocus = { categoryId: activeCategory, id };
+  };
 
   // ── Always render FocusContext so norigin context is present
   // even during loading / error (prevents focus being orphaned). ──────────────
@@ -114,7 +141,7 @@ export function MoviesScreen() {
               <MoviesHero movie={focusedMovie} />
               <MoviesGrid
                 focusedMovieId={focusedMovieId}
-                onFocusMovie={setFocusedMovieId}
+                onFocusMovie={handleFocusMovie}
                 onEscapeToLeft={() => setFocus(`movie-cat-${activeCategory}`)}
               />
             </main>

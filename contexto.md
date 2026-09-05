@@ -38,3 +38,11 @@
 - Implementado via callback onEscapeToLeft passada do MoviesScreen/SeriesScreen para os Grids
 - Fluxo corrigido: grid → seta ← → sidebar de categorias → seta → → grid (sem mais enviar para Home)
 - Botão Voltar do controle (via RemoteRouter) continua funcionando para sair da tela e voltar para Home
+
+### 7. Voltar do player para o mesmo card (não o primeiro)
+- Antes: ao sair do player, o foco caía no primeiro card da categoria
+- Agora: o último card focado é salvo em memória (fora do componente) e restaurado ao voltar do player
+- Implementado em MoviesScreen e SeriesScreen com variáveis de módulo:
+  lastMoviesGridFocus / lastSeriesGridFocus (categoria + id do card)
+- Se o usuário trocar de categoria dentro da tela, o foco vai para o primeiro card da nova categoria (comportamento normal)
+- Se voltar do player na mesma categoria, o foco volta exatamente para o card que abriu o vídeo

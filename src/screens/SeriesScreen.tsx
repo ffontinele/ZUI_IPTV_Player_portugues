@@ -1,7 +1,7 @@
 // SeriesScreen — root layout for the Series screen.
 // Mirrors MoviesScreen: always renders FocusContext, lazy-loads data on mount.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import { useTranslation } from 'react-i18next';
 import { useSeriesStore } from '@/state/seriesStore';
@@ -9,6 +9,8 @@ import { SeriesCategorySidebar } from '@/components/series/SeriesCategorySidebar
 import { SeriesHero } from '@/components/series/SeriesHero';
 import { SeriesGrid } from '@/components/series/SeriesGrid';
 import { EpisodeBrowserModal } from '@/components/series/EpisodeBrowserModal';
+
+let lastSeriesGridFocus: { categoryId: string; id: string | null } = { categoryId: '', id: null };
 
 export function SeriesScreen() {
   const visibleSeries = useSeriesStore(s => s.visibleSeries);
@@ -54,13 +56,38 @@ export function SeriesScreen() {
     }
   }, [status, setFocus]);
 
-  // Category change → reset focused series to first visible
+  const prevCategoryRef = useRef(activeCategory);
+
+  // Categoria mudou dentro da tela → primeira série.
+  // Voltou do player na mesma categoria → restaura a última série focada.
   useEffect(() => {
-    setFocusedSeriesId(visibleSeries[0]?.id ?? null);
+    const categoryChanged = prevCategoryRef.current !== activeCategory;
+    prevCategoryRef.current = activeCategory;
+
+    if (categoryChanged) {
+      const first = visibleSeries[0]?.id ?? null;
+      setFocusedSeriesId(first);
+      lastSeriesGridFocus = { categoryId: activeCategory, id: first };
+      return;
+    }
+
+    const saved =
+      lastSeriesGridFocus.categoryId === activeCategory &&
+      lastSeriesGridFocus.id &&
+      visibleSeries.some(s => s.id === lastSeriesGridFocus.id)
+        ? lastSeriesGridFocus.id
+        : visibleSeries[0]?.id ?? null;
+
+    setFocusedSeriesId(saved);
   }, [activeCategory, visibleSeries]);
 
   const focusedSeries =
     visibleSeries.find(s => s.id === focusedSeriesId) ?? visibleSeries[0] ?? null;
+
+  const handleFocusSeries = (id: string | null) => {
+    setFocusedSeriesId(id);
+    lastSeriesGridFocus = { categoryId: activeCategory, id };
+  };
 
   return (
     <>
@@ -111,7 +138,7 @@ export function SeriesScreen() {
               <SeriesHero series={focusedSeries} />
               <SeriesGrid
                 focusedSeriesId={focusedSeriesId}
-                onFocusSeries={setFocusedSeriesId}
+                onFocusSeries={handleFocusSeries}
                 onEscapeToLeft={() => setFocus(`series-cat-${activeCategory}`)}
               />
             </main>
