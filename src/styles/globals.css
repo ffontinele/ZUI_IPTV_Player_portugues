@@ -15,3 +15,25 @@ body,
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
   user-select: none;
 }
+
+/* ─── Barra de rolagem destacada: trilho branco + polegar preto ─── */
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #0e0b0a;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #000000;
+}
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #0e0b0a rgba(255, 255, 255, 0.95);
+}

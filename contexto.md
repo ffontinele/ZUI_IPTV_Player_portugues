@@ -62,3 +62,9 @@ Esta é a versão que está funcionando 100% e serve como ponto de partida segur
 Próximo desafio conhecido (ainda não resolvido):
 - Seta ← no sidebar escapa pro TopBar (zona de foco invisível)
 - Tentativas de bloqueio não funcionaram; precisa de abordagem diferente
+
+### 10. Barra de rolagem destacada (todas as telas)
+- Antes: barra cinza fininha, quase invisível no fundo escuro
+- Agora: trilho branco brilhante + polegar preto, 12px de largura (igual à foto de referência do usuário)
+- Aplicado via CSS global em src/index.css (vale para todas as telas: filmes, séries, TV ao vivo, configurações, sidebars)
+- Regras antigas de scrollbar foram removidas antes de adicionar as novas
