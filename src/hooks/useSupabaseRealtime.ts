@@ -215,9 +215,18 @@ export const useSupabaseRealtime = (onSuccessCallback: () => void) => {
 
     void startCloudSyncFlow();
 
+
+    // ─── POLLING DE FALLBACK ──────────────────────────────
+    const POLL_INTERVAL = 5000;
+    let pollTimer: ReturnType<typeof setInterval> | null = null;
+    if (isCloudSyncConfigured()) {
+      pollTimer = setInterval(() => void checkAndLoad(), POLL_INTERVAL);
+    }
+
     return () => {
       cancelled = true;
       useCloudSyncRuntimeStore.setState({ isListening: false, _triggerCheckAndLoad: null });
+      if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
       if (channel && clientRef.current) {
         clientRef.current.removeChannel(channel);
       }

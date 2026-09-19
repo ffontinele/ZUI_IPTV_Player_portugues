@@ -3,6 +3,7 @@
 // Aynı zamanda PlaylistsScreen'in "empty state" geçişini tetikler.
 
 import { useState, useEffect, useCallback } from 'react';
+import QRCode from 'qrcode';
 import { useFocusable, FocusContext } from '@noriginmedia/norigin-spatial-navigation';
 import { useTranslation } from 'react-i18next';
 import { FocusableInput } from '@/components/common/FocusableInput';
@@ -309,6 +310,32 @@ function SelectStep({
 
 // onSuccess artık App.tsx seviyesinde useSupabaseRealtime tarafından yönetilir.
 // Prop geriye uyumluluk için tutulur; CloudStep içinde kullanılmaz.
+
+// Componente QR Code gerado localmente em SVG (sem API externa, sem canvas)
+function QrCodeSvg({ deviceId, deviceKey }: { deviceId: string; deviceKey: string }) {
+  const [svgData, setSvgData] = useState<string>('');
+  
+  useEffect(() => {
+    if (!deviceId || !deviceKey) return;
+    const url = `https://ffontinele.github.io/ZUI_IPTV_Player_portugues/painel_web/?id=${deviceId}&key=${deviceKey}`;
+    QRCode.toString(url, { type: 'svg', width: 800, margin: 1 }, (err, svg) => {
+      if (!err && svg) setSvgData(svg);
+      else console.error('[QR] Erro:', err);
+    });
+  }, [deviceId, deviceKey]);
+  
+  if (!svgData) {
+    return <div className="w-full h-full flex items-center justify-center text-white/30 text-[11px]">Gerando QR...</div>;
+  }
+  
+  return (
+    <div 
+      className="w-full h-full [&>svg]:w-full [&>svg]:h-full"
+      dangerouslySetInnerHTML={{ __html: svgData }}
+    />
+  );
+}
+
 function CloudStep({ onBack }: { onBack: () => void; onSuccess?: () => void }) {
   const { t } = useTranslation();
   const {
@@ -402,10 +429,9 @@ function CloudStep({ onBack }: { onBack: () => void; onSuccess?: () => void }) {
         {/* QR, TV Kimliği + Cihaz Anahtarı'nı URL parametresi olarak içerir.
             Taranan telefon web arayüzüne doğrudan doğrulamaya hazır şekilde açılır. */}
         <div className="w-[450px] h-[450px] rounded-2xl border border-white/10 bg-white p-3 overflow-hidden">
-          <img
-            src={`https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(`https://ffontinele.github.io/ZUI_IPTV_Player_portugues/painel_web/?id=${shortDeviceId}&key=${deviceKey}`)}&margin=0`}
-            alt={t('onboarding.qr_alt')}
-            className="w-full h-full rounded-lg object-cover"
+          <QrCodeSvg
+            deviceId={shortDeviceId}
+            deviceKey={deviceKey}
           />
         </div>
         <div className="flex flex-col items-center gap-0.5">
