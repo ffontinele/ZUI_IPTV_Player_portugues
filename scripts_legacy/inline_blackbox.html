@@ -10,7 +10,7 @@
         d.style.cssText='position:fixed;top:0;left:0;right:0;max-height:50%;overflow:auto;background:#900;color:#fff;font:13px/1.5 monospace;padding:10px;z-index:999999;white-space:pre-wrap;';
         (document.body||document.documentElement).appendChild(d);
       }
-      d.textContent+=msg+'\n';
+      d.textContent+=msg+'\n';clearTimeout(window.__zuiT);window.__zuiT=setTimeout(function(){var b=document.getElementById('zui-blackbox');if(b)b.parentNode.removeChild(b);},30000);
     }catch(e){}
   }
   window.__zuiShow=show;

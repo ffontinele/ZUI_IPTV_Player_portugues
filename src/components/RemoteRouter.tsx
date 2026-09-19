@@ -5,7 +5,7 @@ import { usePlayerStore } from '@/state/playerStore';
 import { useSeriesStore } from '@/state/seriesStore';
 import { useMoviesStore } from '@/state/moviesStore';
 import { useToast } from '@/components/ui/Toast';
-import { useTranslation } from 'react-i18next';
+import i18n from '@/i18n';
 
 export function RemoteRouter() {
   const currentScreen = useUIStore((s) => s.currentScreen);
@@ -98,7 +98,7 @@ export function RemoteRouter() {
               ? usePlayerStore.getState().playNextEpisode()
               : usePlayerStore.getState().playPrevEpisode();
             if (r === 'no_more') {
-              const { t } = useTranslation();
+              const t = (k: string) => String(i18n.t(k));
               useToast.getState().show(e.keyCode === 38 ? t('player.no_more_next') : t('player.no_more_prev'));
             }
           } else if (last === 'channelList' || last === 'epg') {
