@@ -20,6 +20,6 @@ fs.writeFileSync(p.join(A,'zui-kick.js'),'System.import("./assets/'+entry+'").ca
 const html='<!doctype html>\n<html lang="pt-BR">\n<head>\n<meta charset="UTF-8"/>\n<meta name="viewport" content="width=device-width, initial-scale=1.0"/>\n<title>ZUI IPTV LEGACY</title>\n<link rel="preconnect" href="https://fonts.googleapis.com"/>\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>\n<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..700;1,6..72,200..700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>\n<link rel="stylesheet" href="./assets/'+css+'"/>\n</head>\n<body>\n<div id="root"></div>\n<script src="./assets/zui-mainpoly.js"></script>\n<script src="./assets/'+poly+'"></script>\n<script src="./assets/zui-kick.js"></script>\n</body>\n</html>\n';
 fs.writeFileSync(p.join(D,'index.html'),html);
 const ai=p.join(D,'appinfo.json');const j=JSON.parse(fs.readFileSync(ai,'utf8'));
-j.id='com.zui.player4';j.version='2.1.0';
+j.id='com.zui.player4';j.version='2.2.0';
 fs.writeFileSync(ai,JSON.stringify(j,null,2));
 console.log('[OK] index.html + appinfo + kick prontos');

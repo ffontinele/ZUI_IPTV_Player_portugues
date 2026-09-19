@@ -317,7 +317,7 @@ function QrCodeSvg({ deviceId, deviceKey }: { deviceId: string; deviceKey: strin
   
   useEffect(() => {
     if (!deviceId || !deviceKey) return;
-    const url = `https://ffontinele.github.io/ZUI_IPTV_Player_portugues/painel_web/?id=${deviceId}&key=${deviceKey}`;
+    const url = `https://ffontinele.github.io/zui-sync/?id=${deviceId}&key=${deviceKey}`;
     QRCode.toString(url, { type: 'svg', width: 800, margin: 1 }, (err, svg) => {
       if (!err && svg) setSvgData(svg);
       else console.error('[QR] Erro:', err);
@@ -366,7 +366,7 @@ function CloudStep({ onBack }: { onBack: () => void; onSuccess?: () => void }) {
           </span>
           <div className="flex items-center gap-3 px-5 py-3.5 rounded-xl bg-white/[0.04] border border-white/[0.07]">
             <span className="text-[18px]">🌐</span>
-            <span className="font-mono text-[14px] text-[#E8B567]/85 tracking-wide">ffontinele.github.io/ZUI_IPTV_Player_portugues/painel_web</span>
+            <span className="font-mono text-[14px] text-[#E8B567]/85 tracking-wide">ffontinele.github.io/zui-sync</span>
           </div>
         </div>
 
@@ -436,7 +436,7 @@ function CloudStep({ onBack }: { onBack: () => void; onSuccess?: () => void }) {
         </div>
         <div className="flex flex-col items-center gap-0.5">
           <p className="text-[10px] text-white/25 uppercase tracking-[0.3em]">{t('onboarding.qr_hint')}</p>
-          <p className="text-[10px] text-white/18 tracking-[0.15em]">ffontinele.github.io/ZUI_IPTV_Player_portugues/painel_web</p>
+          <p className="text-[10px] text-white/18 tracking-[0.15em]">ffontinele.github.io/zui-sync</p>
         </div>
 
         {/* Yeniden Yükle butonu */}

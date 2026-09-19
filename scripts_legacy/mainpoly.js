@@ -1,4 +1,4 @@
-/* ZUI BLACKBOX (silenciosa) + shim Intl.RelativeTimeFormat */
+/* ZUI BLACKBOX + POLYFILLS */
 (function(){
   'use strict';
   function show(msg){
@@ -18,13 +18,14 @@
   });
   window.addEventListener('unhandledrejection', function(e){
     var r = e.reason;
-    show('PROMISE: ' + ((r && (r.message || r)) || '?'));
+    show('PROMISE: ' + ((r && (r.message || r.stack || r)) || '?'));
   });
   window.onerror = function(msg, url, line){
     show('ONERROR: ' + msg + ' @ ' + String(url||'').split('/').pop() + ':' + line);
     return false;
   };
-  /* SHIM PRE-POLYFILLS */
+  show('[BLACKBOX] Monitor ativo');
+  /* SHIM Intl.RelativeTimeFormat */
   if (typeof Intl !== 'undefined' && !Intl.RelativeTimeFormat) {
     var F = function(locale, options){ this.locale = locale || 'en'; this.options = options || {}; };
     F.prototype.format = function(value, unit){
@@ -37,9 +38,7 @@
     F.supportedLocalesOf = function(l){ return l ? (Array.isArray(l) ? l : [l]) : []; };
     Intl.RelativeTimeFormat = F;
   }
-})();
-(function(){
-  'use strict';
+  /* Polyfills ES5 */
   if (typeof window.console === 'undefined') { window.console = { log: function(){}, error: function(){}, warn: function(){} }; }
   if (typeof window.Promise === 'undefined') {
     window.Promise = function(executor) {
